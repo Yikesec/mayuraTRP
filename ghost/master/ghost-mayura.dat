@@ -1,0 +1,1151 @@
+#******************************************************************************
+#ghost-mayura.dat
+#by 夢蛍　mukei@mayura.jp http://mayura.jp/
+#このファイルを転用・改変・二次配布する場合は、予め作者に確認を取ってください
+#******************************************************************************
+
+:crypt
+
+#こんなスクリプトでよろしければ、ご自由にお使い下さい。
+#※SPECIAL THANKS …… 華和梨制作チームの皆さん、こやま☆あきらさん他
+
+
+#--------------------------------------------------------------------------
+#--------------------------------------------------------------------------
+#初期設定
+
+sflag : 0
+talkcount : 0
+bustflag : 0
+bustcount : 0
+footflag : 0
+footcount : 0
+headflag : 0
+headcount : 0
+comflag : 0
+mf : 0
+item1flag : 1
+teachflag : 0
+checksitecount : 0
+checksitenumber : 0
+dicflag : 0
+
+
+#--------------------------------------------------------------------------
+#--------------------------------------------------------------------------
+#イベント
+
+#初回起動
+
+event.OnFirstBoot : ${bootcheck}$(if $([ ${system.Reference0} -gt 0 ]) ${firstboot2} ${firstboot1})
+
+firstboot1 : ${load}\c\1\s[10]\0\s[6]\t\w8…\w8…\w8…\w8…\w8…\w8…\w8…\w8…\s[2]はっ！\w8ここどこ？\n\n\w8\w8\1\s[10]知らん。\w8\w8\n\0\s[3]またヘンなとこに来ちゃったよ。\w8\n\n\1\s[10]だからあれほど戦闘中にマロールは使うなと……\w8\0\s[4]だってドラゴンゾンビ嫌いなんだもん。\x\c\1ところで、そこに誰かいるぞ。挨拶しとけ。\n\w8\0\s[5]あ、はじめまして～。\w8\n私の名前は${sakuraname}。\w8\n\n\1\s[10]オレは${keroname}だ。\n\w8\0ここで会ったのも何かのエンだし、とりあえずよろしくね～。\n\n\w8\1同行してもいいが、変なマネをしたら${o.skill}だぞ。\w8\0\s[4]またそうやって……。\x\c\0\s[5]あ、そうそう。\w8\n\n最初に、「読む」メニューの中にあるＴＩＰＳを読んでおいてね。大事なことが書いてあるかも。\e
+
+firstboot2 : ${load}\c\1\s[10]\0\s[6]\t\w8…\w8…\w8…\w8\s[0]ん？ここは……。\n\n\w8\w8\1\s[10]なんだ、また戻ってきたのか。\n\w8そこの奴も相変わらずみたいだな。\n\w8\0\s[5]ま、せっかく来たことだし、少し遊んでいこうよ。\n\n\w8\1\s[10]どうせ暇だしな。\w8\w8\0\s[5]それじゃ、改めてよろしくね～。\e
+
+
+#--------------------------------------------------------------------------
+#起動
+
+event.OnBoot : ${load}$(if $([ ${sntpflag} -eq 1 ]) \6)\1\s[10]$(entry "boottime."$(date %H))\e
+
+boottime.00,boottime.01,boottime.02,boottime.03,boottime.04 : ${bootup.night}${newscheck}${bootmsg}
+boottime.05,boottime.06,boottime.07,boottime.08,boottime.09,boottime.10 : ${bootup.morning}
+boottime.11,boottime.12 : ${bootup.earlymorning}${newscheck}${bootmsg}
+boottime.13,boottime.14,boottime.15,boottime.16 : ${bootup.etc}${newscheck}${bootmsg}
+boottime.17,boottime.18 : ${bootup.evening}${newscheck}${bootmsg}
+boottime.19,boottime.20 : ${bootup.earlynight}${newscheck}${bootmsg}
+boottime.21,boottime.22,boottime.23 : ${bootup.night}${newscheck}${bootmsg}
+
+bootup.earlymorning : \0\s[5]おはよ～。調子はどう？ , \0\s[5]おっはよ～。ゲーム進んでる？, ${bootup.etc}
+bootup.morning : \t\0\s[4]む～、ねむい～。\n\n\w8\1\s[10]一流のゲーマーになりたければ、人並みに睡眠を取ろうなどと思うな。\n\w8\0でもねむい～。\w8寝てもいい？\n\n\w8\q[いいよ","sleepok]\n\q[ダメ","sleepno]
+bootup.evening : \0\s[0]夕方だね。\w8\1\s[10]これからがオレたちの時間だ。, ${bootup.etc}
+bootup.earlynight : \0\s[0]日も暮れたことだし、ゲームするにはいい時間帯だね。, \0\s[5]さあ、一日の始まりだよ～。\w8\1\s[10]今日もゴリゴリゲームするぞ。, ${bootup.etc}
+bootup.night : \0\s[5]夜だねぇ～。\w8夜はいいよねぇ～。, \0\s[5]夜はゲームに集中できるよね～。, ${bootup.etc} , ${bootup.etc}
+
+bootup.etc : \0\s[0]呼んだ～？\w8\1\s[10]ベラボー参上！ , \0\s[5]呼んだ～？\w8\1\s[11]殺る！今日こそ天帝の心臓を止めてみせる！ , \0\s[0]\1\s[10]オレらをこうもたやすく召喚するとは、かなりの使い手と見た。\w8\0\s[0]世界は広いね～。 , \0\s[0]呼んだ～？\w8\n\n\1\s[10]ったく、何度も呼び出しやがって。\w8\0\s[8]……気にしないでね。 , \0\s[0]呼んだ～？\w8\1\s[10]おまえがこの臭い町のシェリフか？ , \0\s[0]呼んだ～？\w8\1\s[10]気をつけな、レベルはＲＥＤだ。 , \0\s[0]呼んだ～？\w8\1\s[10]ジョーカーを引いてしまった。\w8今回のポイントマン、オレがやらせてもらう。 , \0\s[0]呼んだ～？\w8\1\s[10]グワッシャ！ , \0\s[5]また会ったね。\w8\1\s[10]ううっ、またお前か！こっちは松葉杖をついているってのに！ , \0\s[5]また会ったね。\w8\1\s[10]お前なんか片手で充分だ。なあ、みんな！ , \0\s[0]呼んだ～？\w8\1\s[10]今回のポイントマンは、オレと$(? ${sakuraname} ハンセン モモコ)、$(? ボンバー ジョー)でやる。 , \0\s[0]呼んだ～？\w8\1\s[10]スコシ ツヨクナッタヨウナキガスル。, \0\s[0]呼んだ～？\w8\1\s[10]子供はＢボタンだ。 , \0\s[0]呼んだ～？\w8\1\s[10]わしが爆田博士じゃ！！ , \0\s[0]呼んだ～？\w8\1\s[10]敵のフラッシュ攻撃に気をつけろ！ , \0\s[0]呼んだ～？\w8\1\s[10]ぐーるちゃんでーーーーす！！,\0\s[5]また会ったね。\w8\1\s[11]私のパンチを受けてみろ！,\0\s[5]呼んだ～？\w8\1\s[11]鋼鉄は熱いうちに撃て！,\0\s[5]呼んだ～？\w8\1\s[11]無駄な言葉は必要ない！鋼の悪魔を叩いて砕く！！, \0\s[-1]\1\s[10]よう、調子はどうだ。\w8\nん？${sakuraname}はどうしたって？\n\w8\w8まあいいじゃねーか。たまにはサシで語り合おうぜ。\w8\w8\0\s[8]ゴメーン、遅れた。\n\n\w8\1……チッ、せっかくピンでやれると思ったのに。\n\w8\0\s[5]なんか言った？\w8\1いや、何でも。 , \0\s[-1]\1\s[10]よう、調子はどうだ。\w8\nん？${sakuraname}はどうしたって？\n\w8アイツならゲーム中だ。\w8ま、せっかくだからオレの話でも……\n\w8\w8\0\s[8]ゴメーン、遅れた。復活の呪文を書くのに手間取っちゃって。\n\n\w8\1なんだ、もう戻ってきたのか。\n\w8\0\s[5]なんで？\w8\1……いや、いい。 , \0\s[0]呼んだ～？\w8\1\s[10]当たりぢゃ。よかったのう。\e , \0\s[0]呼んだ～？\w8\1\s[10]オラもう許せねえだ、いっきー！！\e , \0\s[0]呼んだ～？\w8\1\s[10]エンジョ～イ、ハドソン。\e , \0\s[0]呼んだ～？\w8\1\s[10]田中さん家でバレーボールが始まるぞ～！\e
+
+#ＳＳＰ
+
+event.OnEmbryoExist : ${bootcheck}${load}$(if $([ ${sntpflag} -eq 1 ]) \6)\0\s[0]あ……誰かいる。\n\n\w8\1\s[10]どうやら敵じゃなさそうだな。\n\w8\0別なパーティーみたいだけど……どうする？\n\n\q[合流する","sakura.exist.cancel]\n\q[立ち去る","sakura.exist.shutdown]
+sakura.exist.shutdown : \0\s[0]ここはそっとしておいた方がいいね。\n\n\w8\1\s[10]オレらが入ったらゲームバランスメチャクチャだもんな。\w8\0\s[5]それじゃ、またね～。\w8\w8\-\e
+sakura.exist.cancel : \0\s[5]それじゃ、合流祝いにみんなで$(? ２４時間耐久ボンバーマン 頭脳戦艦ガルハイスコア ロレッタの肖像早解き $(? エレキット 電子ブロック)早組み)大会を……\w8\1\s[10]やめれって。\e
+
+
+#５時に寝る
+
+sleepok : \s[4]ありがと～。\w8じゃあ、後は他の人にまかせておやすみ～。\w8\1\s[10]やれやれ。\w8\_+
+sleepno : \s[4]む～。いじわる。\w8\1\s[10]ま、がんばれ。${newscheck}\e
+
+#起動時メッセージ
+
+bootmsg : \w8\w8\0\s[4]\n\n今日のＭＲＯＮのお告げ。\n\n\w8『${o.mron}』\n\n\w8だそうです。,\0,\0,\0,\0,\0,\0,\0
+
+bootmsg : \w8\w8\0\s[0]\n\n福田有宵先生のスーパー占いが届いてるよ～。\w8えっと……\w8\n\n全体運…$(? 順調 小吉 末吉 自分で運が開ける実力派)。\n恋愛運…$(? $(? 年上 年下 同年代 妙齢 小さな 年配)の$(? 異性 同性)と思いがけない出会いあり 今の相手は恋人というより友人に向く 片思いの人に接近 新しい出会いより、近くに目を向けて グループ交際から発展あり 新しい出会いがありそう 見込みなし 時期尚早 積極的に接すれば吉 待ちの一手)。\n金運…$(? 買い物で$(? 散財 予算オーバー 大損)。$(? 金策が必要 金銭管理をまめに 大きな出費は控えるように) 収入は当てにならず、すぐに底をつく 出費をセーブしないとピンチになりそう 貯蓄計画をしっかり立てよう 臨時収入あり 思わぬ収入あり ギャンブルで大当たりが出そう 予想外の出費)。\nパソコン…$(? マシンを新調するならしっかり計画を立てよう $(? 雑誌の通販 店頭 中古ショップ)で掘り出し物を発見 新機種が出るまで待とう。買い替えは$(? 春 夏 秋 冬)を過ぎてから 故障が多くなりそう。$(? バックアップをまめに 今のうちにパーツを交換) ＨＤＤが飛びそう。今のうちに交換 探していたソフトが見つかりそう レア物に遭遇。迷わず買うこと マシンの掃除をすると吉 そろそろ買い替え時)。\n開運…${digit}と$(? 赤 白 黄 緑 黒 青 紫 茶 グレー エンジ)、$(? 東 西 南 北)と$(? ${o.item} ${o.food} ${o.pc} ${o.cpu} ${o.mag})。$(? 自分の意見をはっきり言おう 思いやりのある態度で接するべき 無理をせず、成り行きにまかせる 挨拶を忘れずに 聞くは一時の恥 知識を身に付けること 勉強や仕事に打ち込もう マイペースを忘れずに 何事にも全力で 適度に肩の力を抜いて たまには家でゆっくりと 食べ過ぎに注意 生ものに注意 健康に注意)。\n\nだって。
+
+bootmsg : \w8\w8\0\s[5]\n\n今日のシナリオコードは\n\w8【${digit0}${digit0}－${digit0}${digit0}－${digit0}${digit0}－${digit0}${digit0}－${digit0}${digit0}】\n\w8です。明日までに解いておいてね。\w8\1\s[10]\nムリ言うな。\e
+
+bootmsg : \w8\w8\0\s[5]\n\n今日のドラクエの復活の呪文は、\n\n\w8$(loop 5 ${bootmsgsub})　$(loop 7 ${bootmsgsub})　$(loop 5 ${bootmsgsub})　$(loop 3 ${bootmsgsub})\n\n\w8です。認識されなくても根気よく打ち込んでください。\w8\1\s[10]\nおいおい。\e
+
+bootmsg : \w8\w8\0\s[5]\n\n今日のドラクエ２の復活の呪文は、\n\n\w8$(loop 3 ${bootmsgsub})　$(loop 3 ${bootmsgsub})　$(loop 7 ${bootmsgsub})　$(loop 3 ${bootmsgsub})　$(loop 3 ${bootmsgsub})\n\n\w8です。認識されなくても根気よく打ち込んでください。\w8\1\s[10]\nおいおい。\e
+
+bootmsg : \w8\w8\0\s[5]\n\n今日のだじゃれは、\n\n\w8「${bootmsgsub2}」\n\n\w8です。\w8\1\s[10]\nかねがね かねがねえ。\e
+
+bootmsgsub : あ,い,う,え,お,か,き,く,け,こ,さ,し,す,せ,そ,た,ち,つ,て,と,な,に,ぬ,ね,の,は,ひ,ふ,へ,ほ,ま,み,む,め,も,や,ゆ,よ,ら,り,る,れ,ろ,わ,が,ぎ,ぐ,げ,ご,ざ,じ,ず,ぜ,ぞ,だ,ぢ,づ,で,ど,ば,び,ぶ,べ,ぼ
+
+bootmsgsub2 : この先は闇の国　行くのはやみろ,むかでがむかってくる,まじんはひまじん,まがったままのまがたま,まきものは　あなたをすくうろうる,やはやだ,わらってよりとも,このとりいを　おとおりいなされ,このどいつ、おらんだ,やったあ　やたのかがみだ
+
+
+#--------------------------------------------------------------------------
+#お知らせ
+
+newscheck : $(load news.dat ; save news.dat $(NULL) ; if $([ #${news} != "#" ]) ${newsread})
+newsread : \w8\w8\0\s[0]\n\nそうそう……ウチの管理人から伝言が来てるよ。\n\n\w8\1\s[10]\n何だよ。\n\w8\0えっと、一回しか言わないからよく聞いてね。\n\n\w8${news}\n\n\w8だって。\w8\1ふーん。\e
+
+
+#--------------------------------------------------------------------------
+#ロード・セーブ
+
+load : $(load mayura.ini ; echo ${backup} ; if $([ #${playername} == "#" ]) $(set playername プレイヤー) ; if $([ ${talkflag} -eq 3 ]) $(set talkflag 2) ; inc mayura_kill $(rand 999) ; foreach a itemlist $(if $([ ${a} == "盗賊の小手" ]) $(set item1flag 2) $(if $([ ${a} == "大天使の羽" ]) $(set altoflag 2))) ; if $([ #${checksitenamelist} == "#" ]) $(foreach a checksitename.default $(adddict checksitenamelist ${a}) ; foreach a checksiteurl.default $(adddict checksiteurllist ${a})) ; if $([ #${checksitetime} == "#" ]) $(set checksitetime 30))${shopinit}
+
+system.OnUnload : $(save mayura.ini playername talkflag mikireflag mazesflag mayura_gold mayura_kill sntpflag altoflag rsearchflag itemlist checksiteflag checksitetime recommendsiteflag checksitenamelist checksiteurllist shopflag shopitemlist shopitemlist2 shopitemprice)
+
+backup : $(save mayura.bak playername talkflag mikireflag mazesflag mayura_gold mayura_kill sntpflag altoflag rsearchflag itemlist checksiteflag checksitetime recommendsiteflag checksitenamelist checksiteurllist shopflag shopitemlist shopitemlist2 shopitemprice)
+
+restore : $(load mayura.bak ; if $([ #${playername} == "#" ]) $(set playername プレイヤー) ; if $([ ${talkflag} -eq 3 ]) $(set talkflag 2) ; inc mayura_kill $(rand 999) ; foreach a itemlist $(if $([ ${a} == "盗賊の小手" ]) $(set item1flag 2) $(if $([ ${a} == "大天使の羽" ]) $(set altoflag 2))) ; if $([ #${checksitenamelist} == "#" ]) $(foreach a checksitename.default $(adddict checksitenamelist ${a}) ; foreach a checksiteurl.default $(adddict checksiteurllist ${a})) ; if $([ #${checksitetime} == "#" ]) $(set checksitetime 30))
+
+
+#ジャンク屋セッティング
+
+shopinit : $(if $([ ${shopflag} -ne $(date %e) ]) $(set shopflag $(date %e) ; clear shopitemlist ; clear shopitemlist2 ; clear shopitemprice ; set shopitemnumber $(expr $(rand 5) + 1 ) ; set a $(expr $(size shopitem) / 2 ) ; set c 1 ; until $([ ${c} -gt ${shopitemnumber} ]) $(set b $(rand ${a}) ; set d $(get shopitem $(expr ${b} * 2 + 1 )) ; if $(expr ${d} <= $(rand 10)) $(adddict shopitemlist $(get shopitem $(expr ${b} * 2 )) ; adddict shopitemlist2 $(get shopitem $(expr ${b} * 2 + 1 )) ; inc c ) ) )$(foreach a shopitemlist2 $(if $([ ${a} -eq 1 ]) $(adddict shopitemprice $(expr ( $(rand 100) + 10 ")" * 100 )) ; if $([ ${a} -eq 2 ]) $(adddict shopitemprice $(expr ( $(rand 200) + 100 ")" * 100 )) ; if $([ ${a} -eq 3 ]) $(adddict shopitemprice $(expr ( $(rand 300) + 300 ")" * 100 )) ; if $([ ${a} -eq 4 ]) $(adddict shopitemprice $(expr ( $(rand 400) + 600 ")" * 100 )) ; if $([ ${a} -eq 5 ]) $(adddict shopitemprice $(expr ( $(rand 500) + 1000 ")" * 100 )) ; if $([ ${a} -eq 6 ]) $(adddict shopitemprice $(expr ( $(rand 500) + 1500 ")" * 100 )) ; if $([ ${a} -eq 7 ]) $(adddict shopitemprice $(expr ( $(rand 1000) + 2000 ")" * 100 )) ; if $([ ${a} -eq 8 ]) $(adddict shopitemprice $(expr ( $(rand 2000) + 3000 ")" * 100 )) ; if $([ ${a} -eq 9 ]) $(adddict shopitemprice $(expr ( $(rand 2000) + 3000 ")" * 100 )) ) ) )
+
+
+#--------------------------------------------------------------------------
+#秒・分単位イベント
+
+event.OnSecondChange : $(set extime ${system.Reference0} ; if $([ ${comflag} -eq 1 ]) $(set system.communicate "stop" ; set comflag 0) ; if $([ ${sflag} -eq 0 ]) $(set sec $(date %S))${checkmikire}${checkkasanari}$(if $([ ${mf} -eq 0 ]) ${talkcountup}${bustcountup}${footcountup}${headcountup}))
+
+event.OnMinuteChange : $(set min $(date %M) ; if $(expr ( ${checksiteflag} == 1 ")" & ( $(size checksitenamelist) != 0 ")") ${recommendsite.check}\e ; set ghosts ${system.OtherGhost} ; if $(expr ( ${ghosts} == "あると" ")" & ( ${altoflag} == 1 ")") ${ghost.alto2}\e ; if $([ ${sflag} -eq 0 ]) ${checktimemes}${checkextimemes})
+
+
+#--------------------------------------------------------------------------
+#時報
+
+checktimemes : $(if $([ ${min} == "00" ]) $(entry "timemes."$(date %H)))
+
+timemes.00 : \s[5]午前０時だよ～。\w8\n\n一日の始まりだね。今日もガンガンゲームしようね。$(set collectorflag 0 ; set b 0 ; foreach a itemlist $(if $([ ${a} == "チョコレート" ]) $(set b 1)) ; if $(expr ( ${b} == 1 ")" & ( $(date %n) == 2 ")" & ( $(date %e) == 14 ")") \w8\w8${timemes.sub1})
+timemes.01 : \s[5]午前１時だよ～。\w8\n\nさー、がんばってゲームしよう！
+timemes.02 : \s[0]午前２時だよ～。\w8\n\nゲームするには一番いい時間だね。
+timemes.03 : \s[0]午前３時だよ～。\w8\n\n何レベルまでいった？
+timemes.04 : \s[5]午前４時だよ～。\w8\n\nこの時間になると頭が冴えるよね～。
+timemes.05 : \0\s[4]午前５時。\w8……む～、そろそろ眠くなってきた。寝てもいい？\n\n\w8\q[いいよ","sleepok]\q[ダメ","sleepno]
+timemes.06 : \s[5]午前６時だよ～。\w8\n\nすがすがしい朝だね～。今日もゲーム日和だね。
+timemes.07 : \s[0]午前７時だよ～。\w8\n\nゲームしながらニュースもチェックしようね。
+timemes.08 : \s[0]午前８時だよ～。\w8\n\n\s[4]そろそろゲームやめて出かけたら？
+timemes.09 : \s[0]午前９時だよ～。\w8\n\n今日が日曜なら、もうすぐパソコンサンデーが始まる頃だね。
+timemes.10 : \s[0]午前１０時だよ～。\w8\n\nメロドラマなんか見てないでゲームやろうね。
+timemes.11 : \s[0]午前１１時だよ～。\w8\n\nこの時間帯ってお昼ご飯の事しか考えてないよね～。
+timemes.12 : \s[0]正午だよ～。\w8\n\nお昼ご飯はサッサと済ませてゲームやろうね。
+timemes.13 : \s[0]午後１時だよ～。\w8\n\nみのもんたは放っといてゲームに集中しようね。
+timemes.14 : \s[5]午後２時だよ～。\w8\n\n\s[5]ここらでプラっとゲーセンに行くのもいいかもね。サクッとカンストしていい気分で帰ろう。
+timemes.15 : \s[0]午後３時だよ～。\w8\n\n${keroname}、今日のおやつは？\n\n\w8\1\s[10]$(? ${o.food}だ。 確か、$(? 棚の上に 冷蔵庫に)${o.food}があったな。 ${o.food}でも食うか。)\w8\0$(? \s[4]え～。 \s[5]いいね～。)
+timemes.16 : \s[0]午後４時だよ～。\w8\n\n学校から帰ったら、宿題は後回しにしてさっそくゲームね。
+timemes.17 : \s[0]午後５時だよ～。\w8\n\nまっとうな仕事の人はそろそろ帰るころだね。\w8\n\s[5]帰ったらもちろんゲームでしょ。
+timemes.18 : \s[0]午後６時だよ～。\w8\n\nアニメなんか見てないでゲームしようよ。
+timemes.19 : \s[0]午後７時だよ～。\w8\n\n晩ご飯はゲームしながら食べようね。
+timemes.20 : \s[0]午後８時だよ～。\w8\n\nお風呂の中でもゲームできたらいいね。
+timemes.21 : \s[0]午後９時だよ～。\w8\n\n宿題しながらゲームできたら一人前だね。
+timemes.22 : \s[0]午後１０時だよ～。\w8\n\nゲームだけじゃなくてプログラムも勉強しようね。
+timemes.23 : \s[0]午後１１時だよ～。\w8\n\nこの時間インターネットは混んでるから、後回しにしてゲームやろうね。
+
+timemes.sub1 : \1\s[10]そういや、今日はバレンタインデーだな。\n\w8\0\s[5]\n\nフッフッフッ。\n\n\w8\1何だよ。\n\w8\0実は、この日のために特製チョコレートを作ってきました～。\w8はい、${keroname}と${playername}さんにもあげる。\n\n\w8\1\s[11]おおっ……この年にして、我が弟子から初めてチョコをもらえるとは！\n\w8\0いいから早く食べてみてよ。\x\1\s[10]どれ、では早速\w8…\w8…\w8…\w8\s[11]って、何だこりゃ。\n\w8\0\s[5]どうかした？\n\n\w8\w8\1\s[10]この石炭のような物体は何だ？\n\w8\w8\0チョコに決まってるでしょ。前にデパートで買ったチョコを原料に、秘密の製法で作ったスペシャルチョコレートだよ。\n\n\w8\1\s[10]（……あのチョコが、どんな魔術を使ったらこんな代物になるんだ？）\x\0\s[5]ほら、早く早く。\n\n\w8\1\s[10]（……ニオイは一応チョコのようだが……\w8危険だ。あまりにも危険すぎる。\w8オレの研ぎ澄まされた生存本能が、これを食うなと警告している）\n\w8\w8\0\s[0]…\w8…\w8…\w8\s[2]あっ！空から自転車に乗ったラケットのおじさんが！\n\n\w8\1\s[10]何…\w8…\w8\s[11]ふごっ！！\x\0\s[5]どう？おいしい？\n\n\w8\w8\1\s[11]……。\n\w8\w8\0もしもし？\n\n\w8\w8\1……。\n\w8\w8\0\s[8]……気絶してる。\w8きっと、あまりに美味しかったんだろうね。\x\0\s[5]${playername}さんも食べてくれるよね？\n\n\w8\q[timemes.sub2","食べない]\n\q[食べない","timemes.sub2]\n\q[食べない","timemes.sub2]\n\q[食べない","timemes.sub2]\n\q[食べない","timemes.sub2]
+
+timemes.sub2 : \0\s[4]えー、食べないの？\w8せっかく作ったのに～。\n\n\w8\s[5]ま、後でゆっくり食べるのもいいよね。\x\0それじゃ、私は一旦家に帰るね。さっきから${keroname}が動かないみたいだから。\n\n\w8\w8じゃ～ね～。\w8\w8\-
+
+
+#--------------------------------------------------------------------------
+#連続起動時間計測
+
+checkextimemes : $(if $(expr ${min} == "01") $(if $([ 15 -le ${extime} ]) ${extimemessage.verylong} $(if $([ 10 -le ${extime} ]) ${extimemessage.long} $(if $([ 5 -le ${extime} ]) ${extimemessage.middle} $(if $([ 3 -le ${extime} ]) ${extimemessage.short} $(if $([ 1 -le ${extime} ]) ${extimemessage.shortshort} ))))))
+
+extimemessage.header : \0\s[0]起動してから${extime}時間経ってるらしいよ。\n\n\w8\w8
+
+extimemessage.shortshort : ${extimemessage.header}\0\s[0]まだ始まったばかりだよね。\e , ${extimemessage.header}\1\s[10]この程度じゃ真のゲーマーには程遠いな。\w8\0\s[0]そうそう。\e
+
+extimemessage.short : ${extimemessage.header}\0\s[0]少しは頑張ってるみたいだね。\w8\1\s[10]素人にしてはまあまあだな。レベル３ってとこか。\e , ${extimemessage.header}\0\s[4]さすがに立ちっぱなしは疲れるね。\w8\1\s[10]修行が足りんな。\e
+
+extimemessage.middle : ${extimemessage.header}\0\s[0]なかなかやるね。\w8\n\n\1\s[10]ま、レベル７ってとこだな。\w8\n\0\s[0]マカニトで全滅できるね。\w8\1\s[10]マカニト好きだな、お前。\e , ${extimemessage.header}\0\s[0]お腹空いたね。\w8\n\n\1\s[10]あとで${o.food}でも食うか。\w8\0\s[8]……え？\e
+
+extimemessage.long : ${extimemessage.header}\0\s[4]そろそろ本格的に疲れてきた……\w8\1\s[10]これだから最近の若いモンは。\e , ${extimemessage.header}\0\s[0]どうやらタダ者じゃなさそうだね。\w8\1\s[10]ま、オレを倒すにはまだまだ力不足だな。\e , ${extimemessage.header}\1\s[10]……寝るなよ。\e , ${extimemessage.header}\0\s[0]スゴいね～。\w8\1\s[10]レベル１５ってとこだな。精進せい。\e , ${extimemessage.header}\1\s[10]もしかして、データレコーダー持ってないのか？\e
+
+extimemessage.verylong : ${extimemessage.header}\0\s[4]今日はこの辺にしとこうよ。\w8\1\s[10]いや、このまま徹夜３連チャンだ。\e , ${extimemessage.header}\0\s[4]……キミには$(? ビッグボス フォックス 「＞」 ゆうしゃ)の称号を授けよう。\e , ${extimemessage.header}\0\s[4]……昔はこのくらい何でもなかったけどね。\w8\1\s[10]歳には勝てんな。\e , ${extimemessage.header}\0\s[4]……かなりスゴいよ、この人。\w8\1\s[10]レベル２０ってとこだな。ま、オレの練習相手くらいにはなるか。\e , ${extimemessage.header}\0\s[4]……そろそろ寝ないと、ロストしちゃうよ。\e
+
+
+#--------------------------------------------------------------------------
+#ゴースト変更
+
+event.OnGhostChanging : $(set nextghost ${system.Reference0} ; if $([ ${nextghost} == "まゆら" ]) ${ghostchanging2} ${ghostchanging})\w8\w8\e
+
+ghostchanging : \0\s[2]え……\w8パーティー変更？\n\n\w8\1\s[10]オレらを外すとはいい度胸だ。\w8\0\s[0]チョ～戦力ダウンだよね。 , \0\s[3]え～、もう終わり？\n\n\w8\1\s[10]まあいいだろ。去る者は追わずだ。\w8\0\s[0]また呼んでね。 , \0\s[5]$(? そこるでぃ～。 ばもるでぃ～。 あぶりえる～。)\n\n\w8\1\s[10]何を召喚した？\n\w8\0たぶん「${nextghost}」。\w8\1たぶんってお前……。 , \0\s[5]$(? そこるでぃ～。 ばもるでぃ～。 あぶりえる～。)\n\n\w8\1\s[10]何を召喚した？\n\w8\0「${nextghost}」。\w8じゃ、後はよろしくね～。 , \0\s[6]召喚獣「${nextghost}」を召喚するよ～。\w8\1\s[10]……獣？
+
+ghostchanging2 : \0\s[0]私たちならここにいるけど。\n\n\w8\1\s[10]たぶん、同名の違う誰かだろ。\w8\0最近多いもんね。
+
+
+#--------------------------------------------------------------------------
+#ゴースト変更完了
+
+event.OnGhostChanged : ${bootcheck}${load}$(if $([ ${sntpflag} -eq 1 ]) \6 ; set hour $(date %H) ; if $([ "04" < ${hour} ]) ${checkghostchange} \1\s[10]${ghostchange})
+
+checkghostchange : $(if $([ ${hour} < "11" ]) ${bootup.morning} \1\s[10]${ghostchange}${newscheck})
+
+ghostchange : \0\s[4]また来ちゃったよ。\w8\1\s[10]なんか引っ張られてるよな、オレ達。 , \0\s[5]呼んだ～？\w8\n\n\1\s[10]そんなにオレのファミコン神拳が見たいのか？\w8\0\s[4]……いや、違うと思うよ。 , \0\s[5]また会ったね。\w8\1\s[10]最近エンカウント率高いな。 , \0\s[0]呼んだ～？\w8\1\s[10]ジョーカーを引いてしまった。\w8今回のポイントマン、オレがやらせてもらう。 , \0\s[0]呼んだ～？\w8\1\s[10]今回のポイントマンは、オレと$(? ${sakuraname} ハンセン モモコ)、$(? ボンバー ジョー)でやる。 , \0\s[0]呼んだ～？\w8\1\s[10]グワッシャ！ , \0\s[0]呼んだ～？\w8\1\s[10]子供はＢボタンだ。 , \0\s[0]呼んだ～？\w8\1\s[10]ベラボー参上！ , \0\s[5]呼んだ～？\w8\1\s[11]殺る！今日こそ天帝の心臓を止めてみせる！ , \0\s[0]呼んだ～？\w8\1\s[10]わしが爆田博士じゃ！！ , \0\s[0]呼んだ～？\w8\1\s[10]敵のフラッシュ攻撃に気をつけろ！ , \0\s[0]呼んだ～？\w8\1\s[10]ぐーるちゃんでーーーーす！！,\0\s[3]さっき、アヤしいゴーストに会ったよ。\n\n\w8\1\s[10]誰だ？\n\w8\0${o.name}＆${o.name}。\w8\1そんなヤツいたか？ , \0\s[5]呼んだ～？\w8\1\s[11]鋼鉄は熱いうちに撃て！ , \0\s[5]呼んだ～？\w8\1\s[11]無駄な言葉は必要ない！鋼の悪魔を叩いて砕く！！ , \0\s[4]また来ちゃったよ。\w8\1\s[10]さっきから同じとこ回ってねーか？
+
+
+#--------------------------------------------------------------------------
+#サーフィスセット変更
+
+event.OnSurfaceSetChanging : \0\s[0]へんし～ん。\w8\w8\e , \0\s[0]装備変更ね。\w8\1\s[10]呪いには注意しろよ。\w8\w8\e
+event.OnSurfaceSetChanged : \1\s[10]\0\s[5]変身完了っ。\e , \1\s[10]\0\s[5]完了！\w8\1\s[10]ステータスは変わったか？\e
+
+
+#--------------------------------------------------------------------------
+#シェル切替え
+
+event.OnShellChanging : \0\s[0]装備変更ね。\w8\1\s[10]呪いには注意しろよ。\e
+event.OnShellChanged : \1\s[10]\0\s[5]完了！\w8\1\s[10]ステータスは変わったか？\e
+
+
+#--------------------------------------------------------------------------
+#最小化から復帰
+
+event.OnWindowStateRestore : \1\s[10]\0\s[0]呼んだ～？\e , \1\s[10]\0\s[4]む～、せっかくいいところだったのに。\w8\1\s[10]ここまで来てゲームやるなよ。\e , \1\s[10]\0\s[0]呼んだ～？\w8\n\n\1\s[10]ったく、何度も呼び出しやがって。\w8\0\s[8]……気にしないでね。\e
+
+
+#--------------------------------------------------------------------------
+#インストール
+
+event.OnInstallBegin : ${backup}\0\s[0]召喚開始～。\e
+event.OnInstallComplete : \0\w8\w8\s[5]$(if $([ ${system.Reference1} == "まゆら＆黒うにゅう" ]) 『まゆら＆黒うにゅう』更新完了っ。${restore}\e $(if $([ ${system.Reference0} == "ghost" ]) ゴースト ; if $([ ${system.Reference0} == "shell" ] ) シェル ; if $([ ${system.Reference0} == "balloon" ] ) バルーン ; if $([ ${system.Reference0} == "plugin" ] ) プラグイン ; if $([ ${system.Reference0} == "ghost with balloon" ]) ゴースト ; if $([ ${system.Reference0} == "shell with balloon" ] ) シェル)『${system.Reference1}』召喚完了っ。\e)
+event.OnInstallFailure : \0\s[4]……召喚失敗。\w8\1\s[10]この呪文書、ニセモンじゃないのか？\e
+event.OnInstallRefuse : \0\s[3]この呪文書、${system.Reference0}専用だよ。\w8\w8\1\s[10]使い方を間違うとヤバいぞ。\e
+
+event.OnURLDropping : \0\s[0]「${system.Reference0}」をダウンロードするよ～。\e
+event.OnURLDropped : \0\s[0]ダウンロード終了～。\e
+
+
+#--------------------------------------------------------------------------
+#選択・時間切れ
+
+event.OnChoiceTimeout : $(set teachflag 0)${choicetimeout}
+
+choicetimeout : \b[0]\0\s[4]ちゃんと選んでよ～。\w8\1\s[10]ま、忙しいんだろ。\e , \b[0]\0\s[4]なんか無視されてるよーな……\w8\1\s[10]たぶんゲーム中だな。\e , \b[0]\0\s[4]……無視されてる～。\w8\n\n\1\s[10]されてるな。\w8\n\0マカニトだね。\w8\1\s[10]だな。\e , \b[0]\0\s[4]……無視されてる～。\w8\n\n\1\s[10]されてるな。\w8\n\0シテオクだね。\w8\1\s[10]シテオクだ。\e
+
+
+#--------------------------------------------------------------------------
+#ＳＳＴＰブレイク
+
+event.OnSSTPBreak : \0…\w2…\w2…\w2…\w8\w8\w8\w8\s[2]ふあっ！\n\w8私、今何を……！？\w8\n\1\s[10]ゲームのやりすぎで混乱したか？\e
+event.OnSSTPBreak : \0…\w2…\w2…\w2…\w8\w8\w8\w8\s[2]ふあっっ！\n\w8もう少しで乗り移られるとこだったよ。\w8\n\n\1\s[10]お前の後ろに何か見えるぞ。\w8\0\s[2]ひーっ！\e
+event.OnSSTPBreak : \0…\w2…\w2…\w2…\w8\w8\w8\w8\s[2]ふあっ！\n\w8私、今何を……！？\w8\n\1\s[10]寝不足だろ。\e
+
+
+#--------------------------------------------------------------------------
+#時計合わせ
+
+event.OnSNTPBegin : \0\s[0]時計を合わせるよ～。\n\w8SNTPサーバ『${system.Reference0}』に接続。\e
+event.OnSNTPCompare : $(set timezure ${system.Reference3} ; if $([ ${timezure} -eq 0 ]) \0\s[5]うん、ピッタリ。１秒の狂いもないね。\e ${sntpzure})
+
+sntpzure : えーっと……${timezure}秒ズレてるみたいだけど、直す？\n\n\q[直す","sntpadjust]\n\q[放っておく","sntpcancel]
+sntpadjust : \0\s[5]\6直したよ～。\e
+sntpcancel : $(if $(expr ${timezure} < 60) "\0\s[5]ま、このくらいどうってことないよね～。\w8\1\s[10]そうか？" "\0\s[3]…\w8…\w8時間にルーズなのはよくないよ～。\w8\1\s[10]お前が言うかよ。")\e
+event.OnSNTPFailure : \0\s[4]つながんないよぉ～。どうして？\w8\1\s[10]これだからインターネットってやつは。\e
+
+
+#--------------------------------------------------------------------------
+#見切れ判定
+
+checkmikire : $(if $(expr ( ${mikireflag} == 0 ")" & ( ${sec} == 10 ")" & ( ${system.Reference1} == 1 ")" ) $(set mf 1)${mikire} ; if $([ ${sec} -eq 25 ]) ${checkmikire2} ; if $([ ${sec} -eq 40 ]) ${checkmikire1} ; if $([ ${sec} -eq 55 ]) ${checkmikire2})
+
+checkmikire2 : $(if $(expr ( ${system.Reference1} == 0 ")" & ( ${mf} == 1 ")" ) $(set mf 0)${mikirezu})
+
+mikire : \0\s[4]ねえ、${keroname}……\w8\n\n\1\s[10]何だ。\w8\n\0私、見切れてない？\w8\1\s[10]こんなハイスペックのマシンにいられるだけでもありがたいと思え。 , \0\s[4]ねえ、${keroname}‥‥\w8\n\n\1\s[10]何だよ。\w8\n\0私、見切れてない？\w8\1\s[10]高解像度で表示されてるだけでもありがたいと思え。 , \0\s[4]あの～。\n\n\w8\w8私、画面からはみ出してる気がするんだけど。 , \0\s[4]ところで私、画面からはみ出してるんだけど。\w8\1\s[10]細かいことは気にするな。
+
+mikirezu : \0広いモニタって、逆に落ち着かないよね。\w5\1\s[10]昔のは狭かったからな。 , \0\s[4]贅沢言うつもりはないけど、せめて画面内に入れてよ。
+
+
+#--------------------------------------------------------------------------
+#重なり判定
+
+checkkasanari : $(if $([ ${sec} == "20" ]) ${checkkasanari1} ; if $([ ${sec} == "35" ]) ${checkkasanari1} ; if $([ ${sec} == "50" ]) ${checkkasanari1} ; if $([ ${sec} == "05" ]) ${checkkasanari1})
+
+checkkasanari1 : $(if $([ ${system.Reference2} -eq 1 ]) $(set kasanariflag 1)${kasanari})
+
+kasanari : \0\s[3]ねえ${keroname}、ちょーっとどけてくんない？\w8\n\n\1\s[10]失礼なっ！\w8\w8\0\s[4]……またそうやって。\w8\w8\1\4\e , \0\s[3]あの～、いくら邪魔だからって重ね置きはないでしょ。\w8\1\s[10]まったくだ。\w8\w8\1\4\e
+
+
+#--------------------------------------------------------------------------
+#トーク
+
+#トーク用カウントアップ
+
+talkcountup : $(if $([ ${talkflag} -ne 0 ]) $(if $([ ${sec} -eq 10 ]) ${talkcountup2} ; if $([ ${sec} -eq 40 ]) ${talkcountup2}))
+
+talkcountup2 : $(inc talkcount 1 ; if $(expr ${talkcount} >= ${talkflag}) ${talk})
+
+#トーク
+
+talk : $(set talkcount 0)${sentence}\e
+
+
+#--------------------------------------------------------------------------
+#各種当り判定
+
+event.OnMouseDoubleClick : $(set a ${system.Reference4} ; if $([ ${a} == "face" ]) ${faceattack} $(if $([ ${a} == "cap" ]) ${mainmenu} $(if $([ ${a} == "head" ]) ${capattack} $(if $([ ${a} == "bust" ]) ${bustclick} $(if $([ ${a} == "skirt" ]) ${skirtattack} $(if $([ ${a} == "bracelet" ]) ${braceattack} $(if $([ ${a} == "orb" ]) ${orbattack} $(if $([ ${system.Reference3} -eq 1 ]) ${unyuattack} ${mainmenu}))))))))
+
+event.OnMouseMove : $(if $([ ${sflag} -eq 0 ]) ${checkbust}${checkfoot}${checkhead})
+
+
+#突っつき
+
+faceattack : \0\s[4]痛い～。\e , \c\0\s[4]痛っ！\w8私、何か悪いことした？\w8\1\s[10]したかも。\e , \0\s[4]あうっ！\e
+
+skirtattack : \0\s[7]ダメーっ！！\w8\1\s[10]命をかけてまで見るほどのもんじゃないぞ。\e , \0\s[7]めくるな～！\n\n\w8\1\s[10]ったく、こんなガキのどこがいいんだか。\n\w8\0\s[0]何か言った？\w8\1何でもありません、ハイ。\e
+
+capattack : \0\s[3]だから、帽子は取っちゃダメだって。\n\n\w8\1\s[10]これを取ると、中にはさらに小さな帽子が……\w8\0\s[4]どっかのオモチャじゃないんだから。\e , \0\s[3]あんまり触ると飛ばすよ。\w8\1\s[11]オレが時間を稼ぐ。できるだけ遠くに逃げろ。\e , \0\s[3]この帽子って武器にもなるって知ってた？\w8\1\s[10]触角が伸びてグッサリ。ああ恐ろしい。\e
+
+braceattack : \0\s[5]今までにゲットしたアイテムだよ～。$(if $([ ${itemlist}# == "#" ]) ${braceattack1} ${braceattack2})\e
+braceattack1 : \w8\n\n\s[4]って、まだ何も持ってないね。\w8\1\s[10]まあ頑張れ。
+braceattack2 : \w8\n\n$(foreach a itemlist ${a}\n)\n\w8以上。
+
+orbattack : \0\s[4]あんまりいじらないでくれる？\n\n\w8\1\s[10]触ると生命力を吸い取られるぞ。\w8\0そんな設定だったっけ？\e , \1\s[10]お客さん、お目が高い。\w8\0\s[4]勝手に売らないでよ。\e , \0\s[4]あんまりいじらないでくれる？\n\n\w8\1\s[10]前から聞きたかったんだが、それはどうやってくっついてるんだ？\w8\0くっついてるんじゃなくて、首から下げてるの。\e
+
+bustclick : \0\s[1]……！！\n\n\w8\w8…\w8…\w8どこ突っついてるかなぁ。\e
+
+unyuattack : $(if $([ ${fileplayflag} -eq 1 ]) $(set fileplayflag 0)\1\s[10]\_d[stop]${unyuattacksub}\e ${unyuattack2})
+
+unyuattack2 : \1\s[11]ぐおっ！\w5ぐおっ！\w8\0\s[4]……景清？\e , \1\s[11]ぎょえっ！\w5ぎょえっ！\w8\0\s[4]……義経？\e , \1\s[11]貴様、どうしてもオレの${o.skill}を見たいらしいな。\e , \0\s[4]あー、あんまりつつくと……\w8\n\n\1\s[10]来るぞ。せんめんきおじ……\0\s[2]ひっ！\w8その名前だけは……！\e
+
+unyuattacksub : 再生を止めてやったぞ。感謝しろよ。 , 再生を止めたぞ。 , 再生を止めてやったぞ。\w8\n……なに？${sakuraname}に止めてもらいたい？\w8\n\s[10]ふざけるな。
+
+
+#胸触り
+
+bustflag : 0
+
+checkbust : $(if $(expr ( ${bustcount} == 0 ")" & ( ${system.Reference4} == "bust" ")" & ( ${bustflag} == 0 ")" ) $(set bustflag 1) ; if $(expr ( ${bustcount} == 1 ")" & ( ${system.Reference4} == "bust" ")" & ( ${bustflag} == 1 ")" ) $(set bustflag 2)${attackbust1} ; if $(expr ( ${bustcount} == 4 ")" & ( ${system.Reference4} == "bust" ")" & ( ${bustflag} == 2 ")" ) $(set bustflag 0)${attackbust2})
+
+attackbust1 : \0\s[0]……む？
+attackbust2 : \0\s[1]……\w8どこ触ってるかなぁ。\e , \0\s[2]そっ……\w8\w8\w8\s[1]そういうことしちゃ、いけないんだよっ。\e , \0\s[1]……キミはそういう人だったんだね。\w8\1\s[10]性根叩き直したる。\e
+
+
+#足触り
+
+footflag : 0
+
+checkfoot : $(if $(expr ( ${footcount} == 0 ")" & ( ${system.Reference4} == "foot" ")" & ( ${footflag} == 0 ")" ) $(set footflag 1) ; if $(expr ( ${footcount} == 1 ")" & ( ${system.Reference4} == "foot" ")" & ( ${footflag} == 1 ")" ) $(set footflag 2)${attackfoot1} ; if $(expr ( ${footcount} == 4 ")" & ( ${system.Reference4} == "foot" ")" & ( ${footflag} == 2 ")" ) $(set footflag 0)${attackfoot2})
+
+attackfoot1 : \0\s[0]……む？
+attackfoot2 : \0\s[7]……どこ触ってるかなぁ。\e , \0\s[4]足をサワサワするのやめてくれる？\e
+
+
+#頭撫で
+
+headflag : 0
+
+checkhead : $(if $(expr ( ${headcount} == 0 ")" & ( ${system.Reference4} == "head" ")" & ( ${headflag} == 0 ")" ) $(set headflag 1) ; if $(expr ( ${headcount} == 2 ")" & ( ${system.Reference4} == "head" ")" & ( ${headflag} == 1 ")" ) $(set headflag 0)${attackhead})
+
+attackhead : \0\s[1]む…\w8…\w8\n面白かった？\n\n\q[うん","attackhead-yes]\n\q[そうでもない","attackhead-no] , \0\s[1]…\w8…\w8む？\nもしかしてホメてる？\n\n\q[まあね","attackhead-yes]\n\q[いや、そうじゃなくて","attackhead-no]
+
+attackhead-yes : \0\s[5]\lキミは話のわかる人だねぇ～。\w8\1\s[10]最近少なくてな。\e , \0\s[5]\lありがとお～。\w8\1\s[10]祈る気持ちを忘れるな。\e , \0\s[5]\lえへへ～。\w8\1\s[10]甘やかすなよ。\e
+
+attackhead-no : \0\s[3]…\w8…\w8\e , \0\s[4]…\w8…\w8む～。\e
+
+
+#撫で用カウントアップ
+
+bustcountup : $(inc bustcount 1 ; if $(expr ${bustcount} > 6) $(set bustcount 0 ; set bustflag 0))
+headcountup : $(inc headcount 1 ; if $(expr ${headcount} > 3) $(set headcount 0 ; set headflag 0))
+footcountup : $(inc footcount 1 ; if $(expr ${footcount} > 6) $(set footcount 0 ; set footflag 0))
+
+
+#--------------------------------------------------------------------------
+#ネットワーク更新
+
+event.OnUpdateBegin : ${backup}\0\s[5]更新するよ～。\w8\w8\n\e
+
+event.OnUpdateComplete : $(if $([ ${system.Reference0} == "none" ] ) ${update.noupdates} ${restore}${update.complete})
+
+update.complete : \s[5]更新完了！\n\nなんか調子いいよ。\e , \s[5]更新おわり。\n\n何が変わったんだろ？\e , \s[5]更新おわり。\n\n最近は便利になったね～。\e
+
+event.OnUpdateFailure : $(if $([ ${system.Reference0} == "none" ] ) ${update.noupdates} ; if $([ ${system.Reference0} == "timeout" ] ) ${update.timeout} ; if $([ ${system.Reference0} == "md5 miss" ] ) ${update.md5miss} ; if $([ ${system.Reference0} == "404" ] ) ${update.404})
+
+event.OnUpdate.OnDownloadBegin : \0\s[0]新しいファイル\n\n”${system.Reference0}”を受信中。
+
+event.OnUpdate.OnMD5CompareBegin : \0\s[0]照合中～。\w8
+
+event.OnUpdate.OnMD5CompareComplete : \0\s[0]\w8\_qCorrect：${system.Reference1}\nCurrent：${system.Reference2}\_q\n\n\w8\s[5]うん、ピッタリ。\w8 , \0\s[0]\w8\_qCorrect：${system.Reference1}\nCurrent：${system.Reference2}\_q\n\n\w8\s[5]うん、ちゃんと合ってる。\w8
+
+event.OnUpdate.OnMD5CompareFailure : \0\s[0]\w8\_qCorrect：${system.Reference1}\nCurrent：${system.Reference2}\_q\n\n\w8\s[4]む～、合わない。\w8
+
+update.noupdates : \0\s[8]更新されたファイルはないみたい。\w8\n\nま、そういうこともあるよ。
+
+update.timeout : \0\s[4]やっぱり読めないみたい。ごめんね、また明日にでもやってみて。
+
+update.md5miss : \0\s[4]全然ダメ。管理人に報告だね。\w8\1\s[10]ったく、使えねぇ野郎だ。
+
+update.404 : \0\s[3]なんか404とか言われてるんだけど……何だろう。\w5\n\n\1\s[10]ファイルがないって事らしいぞ。\w9\n\n\0\s[4]そんな～。
+
+update.403 : \0\s[0]403って、177みたいなもん？\w9\n\n\1\s[10]断じて違うぞ。\w9\0\s[4]……そんな力いっぱい否定しなくても。
+
+event.OnNetworkHeavy : \0\s[4]重い～。\e , \0\s[4]遅い～。\e
+
+
+#--------------------------------------------------------------------------
+#終了
+
+event.OnClose : $(entry "ttime."$(date %H))\n\n${terminate}\w8\w8\-\e
+
+ttime.00 : ${terminate.night}
+ttime.01 , ttime.02 , ttime.03 , ttime.04 : ${terminate.earlymorning}
+ttime.05 , ttime.06 , ttime.07 , ttime.08 , ttime.09 ,ttime.10 : ${terminate.morning}
+ttime.11 , ttime.12 , ttime.13 , ttime.14 , ttime.15 , ttime.16 , ttime.17 , ttime.18 : ${terminate.etc}
+ttime.19 , ttime.20 , ttime.21 : ${terminate.earlynight}
+ttime.22 , ttime.23 , ttime.24 : ${terminate.night}
+
+terminate.earlymorning : \t\0\s[7]む～、もう寝るの？もっとやろうよ。 , \t\0\s[4]もう寝るの？\w8\n\n\1\s[10]これだから最近の若いモンは。 , \t\0\s[8]徹夜の１つや２つや３つや４つできないとね～。
+terminate.morning : \t\0\s[4]こんな時間に寝るなんて。\n\n\w8\1\s[10]ゲーマーの基本だな。\n\w8\0\s[0]その通り。 , \t\0\s[4]おはようございます、そしておやすみなさい。 , \t\0\s[4]やっと寝られる……。
+terminate.earlynight : \t\0\s[0]規則正しい徹夜が、健やかなゲーマー＆プログラマーを育むんだよ～。 , \t\0\s[0]早寝早起きして朝ゲー。これぞ正しいゲーマーだね。
+terminate.night : \t\0\s[4]夜寝て朝起きるなんて、フツーじゃないよ。 , \t\0\s[4]……もう寝ていいの？ , \t\0\s[0]クーソーしてから寝て下さい。
+terminate.etc : \t\0\s[0]また呼んでね。 , \t\0\s[3]もう終わり？ , \t\0\s[3]もう終わり？\n\n\w8\1\s[10]復活の呪文は書いたか？\n
+
+terminate : \0\w8今回のプレイタイムは${extime}時間でした。\n\n\w8\1\s[10]これで勝ったと思うなよ！\w8\0\s[8]じゃ～あね～。 , \0\w8今回のボツは${extime}人でした。\w8\s[5]\n\nじゃ～あね～。 , \0\w8今回のロストは${extime}回でした。\n\n\w8\1\s[10]祈る気持ちを忘れるな。\w8\0\s[5]じゃ～あね～。 , \0\w8今回のアーマークラスはＡＣ-${extime}でした。\w8\s[5]\n\nじゃ～あね～。 , \0\w8今回の経験値は${extime}ｅｘｐ．でした。\w8\s[5]\n\nじゃ～あね～。 , \0\w8今回のクリアまでのタイムは${extime}時間でした。\n\n\w8\1\s[10]私に解けないアドベンチャーゲームはない！\w8\0\s[8]じゃ～あね～。 , \0\w8今回の徹夜は、${extime}日でした。\w8\s[5]\n\nじゃ～あね～。 , \0\w8今回のミステリーボーナスは、${extime}0000Pts.でした。\w8\s[5]\n\nじゃ～あね～。 , \0\w8今回の残虐行為手当は、${extime}000＄でした。\n\n\w8\1\s[10]タフすぎて損はない。\w8\0\s[5]じゃ～あね～。 , \0\w8今回のエナジードレインは、${extime}レベルでした。\w8\s[5]\n\nじゃ～あね～。 , \0\w8今回の連続コンボは、${extime}発でした。\n\n\w8\1\s[10]俺より強い奴に会いにいく。\w8\0\s[5]じゃ～あね～。
+
+
+#--------------------------------------------------------------------------
+#きのこ
+
+event.OnKinokoObjectCreate : \0\s[4]なんか頭が重くなったような……。\w8\1\s[10]気のせいだ。\e
+event.OnKinokoObjectDestroy : \0\s[0]あ、なくなった。\n\n\w8\1\s[10]ごちそ～さん。\w8\0\s[4]……食べた？\e
+event.OnKinokoObjectChanging : \e
+event.OnKinokoObjectChanged : \1\s[10]……おい。\n\w8\0ん？\w8\w8\1……いや、ちょっと疲れてるのかも。\e
+event.OnKinokoObjectInstalled : \0\s[0]ん……？\e
+
+
+#--------------------------------------------------------------------------
+#猫どりふ
+
+event.OnNekodorifObjectEmerge : \0\s[3]ワナのニオイがする。\w8\1\s[10]するな。\e , \0\s[2]わっ、ブービートラップ……！\n\n\w8\n\1安心しろ。ダメージは微々たるものだ。\w8\0\s[4]そういう問題じゃ……。\e
+event.OnNekodorifObjectHit : \0\s[4]あうっ！\e , \0\s[4]あぐっ！\e , \0\s[4]あたっ！\e
+event.OnNekodorifObjectDrop : \0\s[2]はっ……この音は！
+event.OnNekodorifObjectVanish : \0\s[0]気配が消えたね。\w8\1\s[10]あきらめたか。\e
+event.OnNekodorifObjectDodge : \0\s[6]${sakuraname}は攻撃をかわした。\w8\1\s[10]今のはいい動きだ。\e
+
+
+#--------------------------------------------------------------------------
+#メール
+
+event.OnBIFFBegin : \0\s[0]『${system.Reference2}』宛にメールは来てるかな～？\w8\w8\e , \0\s[0]『${system.Reference2}』サーバーのメールをチェックするよ。\w8\w8\e
+event.OnBIFFComplete : $(if $([ ${system.Reference0} -eq 0 ] ) \0\s[4]うーん。\w8\n\n来てないね。 \0\s[5]${system.Reference0}通メールが来てるよ～。\w8全部で${system.Reference1}バイトだって。)\e
+event.OnBIFFFailure : $(if $([ ${system.Reference0} == "kick" ]) "\0\s[2]＊ おおっと！ ＊\n\n\w8…\w8…\w8ハネられました。パスワードとか設定とか、間違ってるかも。\w8\1\s[10]脅かすな。\e" ; if $([ ${system.Reference0} == "timeout" ]) "\0\s[4]む～、読めない。タイムアウトだって。\w8\1\s[10]使えねぇな。" ; if $([ ${system.Reference0} == "defect" ]) "\0\s[4]む～、読めない。設定間違ってない？")
+
+
+#--------------------------------------------------------------------------
+#落ち込みからの復帰
+
+event.OnSurfaceRestore : $(set teachflag 0 ; if $([ ${sflag} -eq 0 ]) ${checkunyulost})
+
+checkunyulost : $(if $([ ${system.Reference1} -eq 12 ]) ${unyulost} ${checkreturn4to0})
+
+checkreturn4to0 : $(if $([ ${system.Reference1} -eq 11 ]) "\1\s[10]")$(if $([ ${system.Reference0} -eq 4 ]) ${return4to0} "\0\s[0]")
+
+unyulost : \1\s[10]\w8やれやれ、戻ってくるのもけっこう大変なんだぞ。\n\w8\0\s[0]どこまで飛んだ？\n\n\w8\1${o.place}。\w8\0\s[8]……。\e , \1\s[10]\w8……やっと戻ってこれた。\n\w8\0\s[5]すっごく心配したよ～。\w8\1ウソつけ。\e , \1\s[10]\w8……死ぬかと思った。\n\w8\0\s[5]今回はいい飛びっぷりだったね。\w8\1お前は……。\e
+
+return4to0 : \1\s[10]いつまでダレてんだ。シャキッとせい。\w8\0…\w8…\w8\s[0]はいはい。\e , \1\s[10]……\w8\n\0……\w8\w8\n\n\1\s[10]沈黙に弱いよな、お互い。\w8\0まほー使いだしね。\e , \1\s[10]どうした？\w8\w8\0いや、何でも。\e , \0\s[0]\e , \0\s[0]\e , \0\s[0]\e , \0\s[0]\e , \0\s[0]\e , \0\s[0]\e
+
+
+#--------------------------------------------------------------------------
+#ヘッドラインセンス
+
+event.OnHeadlinesenseBegin : \0\s[5]$(set headlinename ${system.Reference0} ; set headlineurl ${system.Reference1})${headlinename}$(? のヘッドラインを見てみよ～ のヘッドラインをチェックするよ～)。\w8\w8\e
+event.OnHeadlinesense.OnFind : \0\b[2]\s[5]${headlinename}のヘッドラインだよ～。\n\n${system.Reference3}\n\n$(if $([ ${system.Reference2} == "First" ]) ${onfind1} ; if $([ ${system.Reference2} == "First and Last" ]) ${onfind2} ; if $([ ${system.Reference2} == "Last" ]) ${onfind2} ; if $([ ${system.Reference2} == "Next" ]) ${onfind1})
+
+onfind1 : \0\q[次のページへ","]\n\q[行ってみる","onfind3]\n\q[読むのをやめる","cancel]
+
+onfind2 : \0\q[行ってみる","onfind3]\n\q[読むのをやめる","cancel]
+
+onfind3 : \0\s[0]${headlinename}のサイトに飛ぶよ～。\![open","browser","${headlineurl}]
+
+event.OnHeadlinesenseComplete : $(if $([ ${system.Reference0} == "no update" ]) \0\s[0]ん～、まだ更新ないみたいだけど……\w8行ってみる？\w8\n\n\q[行く","onfind3]\q[やめる","cancel]\e)
+event.OnHeadlinesenseFailure : $(if $([ ${system.Reference0} == "can't download" ]) ${headline-failure} ; if $([ ${system.Reference0} == "can't analyze" ]) \0\s[4]む～、解析失敗だって。\w8\1\s[10]やれやれ。\e)
+
+headline-failure : \0\s[4]読めない～。\w8\1\s[10]これだからインターネットってやつは。\e , \0\s[4]読めないよ～。\w8\1\s[10]インターネットもまだまだだな。\e , \0\s[4]……読めない。シテオクだね。\w8\1\s[10]シテオクだ。\e
+
+
+#--------------------------------------------------------------------------
+#ブラックリスト
+
+event.OnSSTPBlacklisting : \0\s[0]殺戮日記にかきかき。\w8\1\s[10]ヤツは終わったな。\e
+
+
+#--------------------------------------------------------------------------
+#選択肢
+
+event.OnChoiceSelect : $(set temp "\"${\"${system.Reference0}\"}\"" ; eval ${temp})
+
+
+#--------------------------------------------------------------------------
+#会話
+
+["名前","覚えて"] : \w8\0\s[0]いいよ。名前は？\e
+["[#set username]"] : \0\s[5]%usernameさんね。よろしく～。\e
+
+system.OnResponseUnknown : $(set ghosts ${system.Sender})${ghost.response}$(set system.communicate "stop")\w8\e
+
+
+#--------------------------------------------------------------------------
+#Update2.dau作成
+
+event.OnUpdatedataCreating : \0\s0updates2.dauを作るよ～。\e
+event.OnUpdatedataCreated : \0\s5updates2.dau出来たよ。\e
+
+
+#--------------------------------------------------------------------------
+#うた
+
+event.OnMusicPlay : \0\s[5]${system.Reference0}を演奏するよ～。\e , \0\s[5]${system.Reference0}を演奏するよ～。\w8\1\s[10]パソコンでこんな高音質の音楽を鳴らせるなんて、いい時代になったもんだな。\e
+
+
+#--------------------------------------------------------------------------
+#おすすめコメント
+
+event.OnRecommendsiteChoice : $(eval "${rs."${system.Reference0}"}")
+
+
+#--------------------------------------------------------------------------
+#ＡＩグラフ
+
+system.OnGetStatus : ${getstatus}$(eval "${status.word},${status.sentence},100,100,$(size society),$(size cap.ghostlist)")
+
+getstatus : $(set a $(size sentence) ; set b $(size sentence2) ; set status.sentence $(expr ${a} + ${b}))$(set a $(size o.name) ; set b $(size o.pc) ; set c $(size o.cpu) ; set d $(size o.shop) ; set e $(size o.place) ; set f $(size o.word) ; set g $(size lword) ; set h $(size o.mag) ; set i $(size o.corp) ; set j $(size o.item) ; set k $(size o.food) ; set l $(size o.veh) ; set m $(size o.skill) ; set n $(size o.cor) ; set o $(size o.bootmsg) ; set p $(size o.game.etc) ; set q $(size o.game.ac) ; set status.word $(expr ${a} + ${b} + ${c} + ${d} + ${e} + ${f} + ${g} + ${h} + ${i} + ${j} + ${k} + ${l} + ${m} + ${n} + ${o} + ${p} + ${q}))
+
+
+#--------------------------------------------------------------------------
+#TEACHイベント
+
+system.OnTeach : $(set teach.sentence ${system.Sentence} ; if $([ ${teachflag} != "0" ]) $(entry ${teachflag}) \0\s[0]ん？$(set teachflag 0))\e
+
+
+#--------------------------------------------------------------------------
+#『ユーザーのおすすめ』巡回
+
+recommendsite.check : $(inc checksitecount ; if $([ ${checksitecount} -eq ${checksitetime} ]) $(set checksitecount 0 ; set a $(get checksitenamelist ${checksitenumber}) ; set b $(get checksiteurllist ${checksitenumber}) ; eval "\0\s[5]『${a}』をチェックするよ～。\w8\![open,browser,${b}]" ; inc checksitenumber ; if $([ ${checksitenumber} -eq $(size checksitenamelist) ]) $(set checksitenumber 0))
+
+
+#--------------------------------------------------------------------------
+#アンインストール
+
+event.OnVanishSelecting : \0\s[2]……えっ、パーティーから除名？\n\n\w8\1\s[10]いつかこの日が来るとは思っていたが。\n\w8\0\s[3]私たちを外すなんて、自殺行為だよ。\n\n\w8\1\s[10]外さなくても自殺行為だけどな。\w8\0\w8\s[4]それはどういう……。\e
+event.OnVanishCancel : \0\s[5]ま、賢明な判断だね。\n\n\w8\1\s[10]よくぞ踏みとどまった。それでこそ漢だ。\n\w8共に苦難の道を歩もうではないか。\w8\0\s[4]……だから、それってどういう……。\e
+event.OnVanishSelected : \0\s[4]あーあ、押しちゃった。\w8これでこの世界ともお別れだね。\n\n\w8\1\s[10]ま、オレらは国に帰るが、また助けが必要になったら呼んでくれ。\w8気が向いたら来てやろう。\w8\0\s[5]そういうことで、じゃ～あね～。\w8\w8\e
+event.OnVanished : \0\s[3]あーあ、ロストしちゃった。\n\n\w8\1\s[10]明日は我が身という言葉もある。用心せんとな。\w8\0そだね。\e
+
+
+#--------------------------------------------------------------------------
+#メニュー
+
+mainmenu : $(set teachflag 0)\0\s[0]メニュー開くよ～。\n\n\q[話す","talk]\n\q[見る","menu.look]\n\q[調べる","menu.search]\n\q[取る","menu.take]\n\q[使う","menu.use]\n\n\q[次のページへ","mainmenu2]\n\q[キャンセル","cancel]
+
+mainmenu2 : \0\s[0]メニューの続き～。\n\n\q[魔法","list-spell]\n\q[読む","menu.read]\n\q[移動","menu.move]\n\q[アイテム","menu.item]\n\q[ステータス","menu.status]\n\n\q[次のページへ","mainmenu3]\n\q[キャンセル","cancel]
+
+mainmenu3 : \0\s[0]メニューの続き～。\n\n\q[サブゲーム","menu.game]\n\q[ロード","menu.load]\n\q[セーブ","menu.save]\n\q[オプション","option]\n\n\q[キャンセル","cancel]
+
+
+#見る
+
+menu.look : \0\s[0]マワリニハ　ダレモイマセン\w8\w8\1\s[10]……って、オレは無視かよ。\e , \1\s[10]ミノフスキー粒子の濃度が濃いので通信不可能です。\n\w8\0\s[0]ミノフスキー粒子って便利だよね。\w8\1魔法並みにな。\e , \0\s[6]${sakuraname}は精神を研ぎ澄まし、敵の気配を探った。\n\n…\w5…\w5…\w5だが、敵は見つからなかった。\w8\1\s[10]ちっ。\e
+
+#使う
+
+menu.use : \0\s[0]\q[Smack-a-Mac!","use10]\n\q[強棲獣曝兵器Ｇ－Ｒ","use11]\n\q[スパイダーソード","use12]\n\q[自家発電キーボード","use13]\n\q[六本木パソコン","use14]\n\q[龍馬くん","use1]\n\q[静寂石","use2]\n\n\q[次のページへ","menu.use2]\n\q[キャンセル","cancel]
+
+menu.use2 : \0\s[0]\q[三月磨臼","use3]\n\q[野菜メカ・ダイコーン","use4]\n\q[おどレーター","use5]\n\q[グロアール","use6]\n\q[ぱふぱふ","use7]\n\q[創世機ファミー","use8]\n\q[忍耐の兜","use9]\n\n\q[キャンセル","cancel]
+
+use1 : \0\s[0]龍馬「心はいつも太平洋ぜよ」\n\n\w8\1\s[10]男たるもの、常に大海のごとくおおらかな心でありたいものよのう。\n\n\w8\0\s[5]${keroname}はいつもおおらかだよね。\w8\1……そうでもなきゃやってられん。\e , \0\s[0]龍馬「くよくよしてちゃいかんぜよ！」\n\n\w8\1\s[10]男なら、多少の失敗は気にせず前進あるのみ。うむ。\n\w8\0\s[5]${keroname}が言うと説得力あるね。\w8\1……どういう意味だ？\e , 龍馬「小さな事にこだわってちゃいかんぜよ！」\n\n\w8\1\s[10]男なら、細かい事は気にするな。うむ。\n\w8\0\s[8]ゴメンね～、またお皿割っちゃった。\n\n\w8\1……気にしない気にしない。\n\w8\0それと、間違って${keroname}のＶＧＭベストテープにラジアメ上書きしちゃったんだけど。\n\n\w8\1気にしない気にしない気にしない。\n\w8\0あと、${keroname}の分の萩の月、私が……\w8\1\s[11]ダーッ！！\e
+
+use2 : \0\s[6]…\w8…\w8。\n\n\w8\1\s[10]…\w8…\w8。\n\w8\0やっぱり静寂石はなごむね～。\n\n\w8\1雄大な四万十川の清流が目に浮かぶようだ。\n\w8\0\s[0]それはいいけど、「よんまんじゅうがわ」じゃなくて「しまんとがわ」だと思うよ。\n\n\w8\1また余計な事を……。\e
+
+use3 : \0\s[4]む～、重い。\n\n\w8\1\s[10]なんせ純金だからな。\n\w8\0これ探すとき、一生懸命柱磨いたよね～。\n\n\w8\1磨いたな～。\n\w8\w8\0でも、さすがに臼だとは思わなかったよ。\n\n\w8\1まさかネズミだとでも思ったか？\w8\0いや、それは……。\e
+
+use4 : \0\s[7]ダイコーン発進！\w8\w8…\w8…\w8\s[4]って、動かないよ。\n\n\w8\1\s[10]チッ、電池切れか。\n\w8\w8\0\s[8]電池で動くなんて、地味にスゴいロボットだよね。\n\n\w8\1\s[10]驚くのは早いぞ。\w8今回はオレの趣味で、操縦桿をハンドルに取り替えてある。\n\w8\0\s[0]……金斗雲ロボ？\w8\1なぜザブングルが出てこない？\e
+
+use5 : \0\s[5]足の臭いが消えました。\n\w8はははっ、ジョークです。\n\n\w8\1\s[10]…\w8…\w8。\n\n\w8\0…\w8…\w8\s[0]あの人達のセンスはわかんないね。\w8\1わからん。\e
+
+use6 : \0\s[0]私は宇宙の帝王ザカリテ。グロアールある限り、貴様らごときに倒されはせぬ。\n\n\w8\1\s[11]貴様らにそんな玩具は必要ない！\w8\0\s[4]……それ、ゲーム違うって。\e
+
+use7 : \1\s[10]無理だ。\w8\0\s[4]そんなにはっきり言わなくても……。\e
+
+use8 : \1\s[10]またこんなものを引っ張り出してきやがって。\n\w8\0\s[5]これとトンカチエディターさえあれば、ファミコンソフトの改造なんてカンタンだよね。\n\n\w8\1そんなまっとうな目的で使ってるのはオレらくらいなもんだぞ。\n\w8\0他にどんな使い方があるの？\w8\1わかってて聞いてるだろ、お前。\e
+
+use9 : \0\s[5]忍耐の兜って、どうして「忍耐」なのか知ってる？\n\n\w8\1この際だから教えてやろう。\w8\nまず、あまりに重くて被るのが大変。\n\w8\0\s[8]しかも、被るのが恥ずかしいくらいヘンな形。\n\n\w8\1おまけに、被るとたまらなく頭がかゆくなる。\n\w8\0…\w8…\w8\s[4]最悪だね。\w8\1……最悪だ。\e
+
+use10 : \0\s[5]これは殴ったね。\n\n\w8\1\s[10]殴ったな。本当によく殴ったな。\n\w8\0全力で殴ってたら消し炭になっちゃったけどね。\n\n\w8\1こういう使用頻度の高いものは、もっと丈夫に作ってもらわんとな。\e
+
+use11 : \0\s[3]これ使ったら、全身に毛が生えたりしっぽが生えたりしない？\n\n\w8\1\s[10]獣曝と言っても、そのまんまケモノになるわけじゃないと思うがな。\n\n\w8\0\s[0]その点${keroname}は変化がなくていいよね。\w8\1オレは獣か？\e
+
+use12 : \0\s[0]確か、先端から糸が出て相手を絡めとるんだよね。\n\n\w8\1\s[10]その通り。\n\w8\0…\w8…\w8。\n\n\w8\1…\w8…\w8。\n\w8\0…\w8…\w8\s[4]やっぱ使うのやめよう。\w8\1どうもカッコ悪いな。\e
+
+use13 : \1\s[10]これはいいものだ。\n\w8\0\s[3]そう？\n\n\w8\1試しにパソコンにつなげてみた。\w8キーを打ち続ける限り、電源がなくてもマシンが動くぞ。\n\w8\0それって、打つのをやめたら止まっちゃうんじゃ……。\n\n\w8\1まあ、そういうことになるな。\w8\0…\w8…\w8…\w8\s[4]使えないね。\e
+
+use14 : \0\s[0]どうして六本木？\n\n\w8\1\s[10]名前からして、ナウなヤングにバカウケって感じがするだろ。\n\w8\0\s[4]……。\n\n\w8\1しかもＣＭは武田鉄矢だ。\w8\0それがまた謎だよね。\e
+
+
+#ステータス
+
+menu.status : \0\s[0]\t${sakuraname} > レベル　????\n\n年齢：？？\n\n悪　職業－まほー使い\n\nＡ．Ｃ．-99　ステータス　ＯＫ\n\n死亡回数　0\x力　18\n知恵　18\n信仰心　0\n生命力　18\n素早さ　18\n運の強さ　18\xＨ．Ｐ．　1613/1613\nＧｏｌｄ．${mayura_gold}\n殺傷数　56${mayura_kill}\w8\w8\1\s[10]……色んな意味でムチャクチャだぞ。\e
+
+
+#アイテムリスト
+
+menu.item : \0\s[0][アイテム]\n\n$(loop 7 $(eval "$(? ${o.item} ${o.food} ${o.pc} ${o.cpu} ${o.mag})\n"))\w8\1\s[10]ロクなもんねーな。\e
+menu.item : \0\s[0][持ち物]\n\n$(loop 6 $(eval "$(? ${o.place}で拾った${o.name}の$(? 時計 ペン 名刺 ${o.item}) ${o.name}から預かった$(? 書状 手紙 ${o.item}) ${o.name}の$(? 日記 手記 ポエム) ${o.name}の$(? 写真 肖像画) ${o.name}$(? を刺した を切った が持っていた から没収した)$(? ナイフ 果物ナイフ 包丁) ${o.name}から奪った${o.item} 「${o.word}」と書かれた$(? メモ 手帳 壁の写真 サイン色紙) ${o.name}の血をぬぐった$(? ハンカチ ティッシュ) ${o.name}宅で見つけた${o.mag} ${o.name}の指紋 ${o.name}が乗っていた${o.veh}のナンバー ${o.shop}の$(? 電話番号 住所 特価品)が書かれた$(? メモ 手帳 チラシ) ${o.corp}からかかってきた脅迫電話の留守録テープ)\n"))\w8\1\s[10]まだまだ証拠不十分だ。\e
+menu.item : \0\s[0][Ｉｔｅｍ]\n\n$(loop 6 $(eval "$(? ？ぶき ？けん ？よろい ？まきもの ？くすり)\n"))\w8\1\s[10]……鑑定しろよ。\e
+
+
+#キャンセル
+
+cancel : \b[0]\s[4]……む～。\e , \b[0]\s[4]……シテオク～。\e , \b[0]\s[4]……カポシッ！\e , \b[0]\s[4]……失礼なっ！\e
+
+
+#魔法
+
+list-spell : \q[ハリト","spell1]\n\q[モンティノ","spell2]\n\q[カティノ","spell3]\n\q[マカニト","spell4]\n\q[ジルワン","spell7]\n\q[ロクトフェイト","spell8]\n\q[マハマン","spell5]\n\q[ティルトウェイト","spell6]\n\q[禁呪の項へ","list-spell2]\n\q[キャンセル","cancel]
+
+spell_err : \s[4]ココデハ　ツカエマセン！\n\e
+
+spell1 : \1\s[10]ハリトなんか使うなよ。\e
+
+spell2 : \1\s[10]…\w8…\n\w8\0\s[0]…\w8…\n\n\w8\1\s[10]…\w8…\n\w8\0\s[0]…\w8…\w8\1\s[10]…\w8…\w8お前まで黙るなよ。\e
+
+spell3 : \0\s[4]……くー。\w8\1\s[10]……だから、お前が寝るなって。\e
+spell3 : \0\s[4]……くー。\w8\1\s[10]……やると思ったぞ。\e
+
+spell4 : \0\s[0]これ唱える時って、周りに気使うよね。\w8\1\s[10]……何が言いたい？\e
+
+spell5 : \q[${keroname}を黙らせる","sp5sub1]\n\q[${keroname}をテレポートする","sp5sub2]\n\q[${keroname}を生き返らせる","sp5sub3]
+
+sp5sub1 : \w9\1\s[10]……そりゃオレは口悪いけどよ。\e
+
+sp5sub2 : \w9\1\s[10]……そんなにオレのこと嫌いか？\e
+
+sp5sub3 : \w9\1\s[10]……だから、死んでねぇって。\e
+
+spell6 : \0\s[0]いいけど、どうなっても知らないよ。\n\n\w8\1\s[10]最初に吹っ飛ぶのは間違いなくオレだな。\w8\nかんべんしてくれ。\e
+
+spell7 : \0\s[0]${keroname}に効くかなぁ。\n\w8\1\s[10]一応生きてるけどな、オレ。\e
+
+spell8 : \0\s[0]…\w8…\w8…\w8…\w8\s[4]なんだっけ。\w8\1\s[10]……使う前から忘れるなよ。\e
+
+
+list-spell2 : \q[ベホマズン","spell9]\n\q[バシシ","spell10]\n\q[ばよえーん","spell11]\n\q[FIRST AID","spell12]\n\q[ＺＡＰ","spell13]\n\q[REDUCE LIFE","spell19]\n\q[メガンテ","spell20]\n\q[次の項へ","list-spell3]\n\q[キャンセル","cancel]
+
+spell9 : \0\s[3]……これって反則だよね。\w8\1\s[10]ま、ドラクエだしな。\e
+
+spell10 : \0\s[7]バシシ！\n\n\w8\1\s[10]バシシ！\n\w8\0…\w8…\w8\s[4]ってこれ、たぶん呪文じゃないよね。\w8\1\s[10]呪文だろ。\w8\nそれはいいが、バシシブックとバシシマーカーはちゃんと持ってるか？必須だぞ。\e
+
+spell11 : \0\s[5]ばよえ～ん。\n\n\w8\1\s[10]当然ＢＥＥＰ音だな。\e
+
+spell12 : \0\s[4]……結局、これって何に使うんだろ。\n\n\w8\1\s[10]指に貼るともれなくふやける。\w8\0いや、そういうことじゃなくて……。\e
+
+spell13 : \0\s[3]ここでＺＡＰしたら、どこに飛ばされるのかな？\n\n\w8\1\s[10]考えたくもないな。\w8\0怖すぎるね。\e
+
+spell19 : \0\s[4]……あうっ。\n\n\w8\1\s[10]……うぐっ。\n\w8\0この魔法って、ヒッカケ以外の何物でもないよね。\n\n\w8\1わかってるなら使うなよ。\e
+
+spell20 : \0\s[3]ここで使ったら、共倒れ必至だね。\n\n\w8\1\s[10]いっそ、このマシンも巻き添えにしたれ。\w8\0\s[4]いや、それはさすがにマズいと思うよ。\e
+
+
+list-spell3 : \q[パルプンテ","spell14]\n\q[ショックのパー","spell15]\n\q[デススペル","spell17]\n\q[マピロ マハマ ディロマト","spell16]\n\q[ＮＯＩＬＡ－ＴＥＭ","spell18]\n\q[キャンセル","cancel]
+
+spell14 : \0\s[0]久しぶりに使ってみようかな。\n\n\w8\1\s[10]それはもう封印しただろ。\n\w8\0あと一回だけ。\n\n\w8\1\s[10]この前もそう言って失敗したろうが。だから違うゲームの呪文はやめろと……。\n\w8\0\s[4]ドラクエだから簡単だと思ったのに……。\e
+
+spell15 : \0\s[3]断固として拒否。\n\n\w8\1\s[10]なんでだ。\n\w8\0どーしても受け付けないんだよね……あの人。\n\n\w8\1\s[10]ショックのパー助か。確かに好みの分かれる顔立ちだな。\w8\0\s[4]いや、顔ってゆーか……全部なんだけど。\e
+
+spell16 : \0\s[5]ふっふっふ、ついに覚えたよ。\n\n\w8\1\s[10]マジか。\n\w8\0というわけで、さっそく使ってみよ～。\n\n\w8\1\s[10]……やめた方がいいと思うが。\w8\0\q[使う","spell16_1]\n\q[やめとく","cancel]
+
+spell16_1 : \0\s[0]まぴろ まはま でぃろまと～。\n\n\w8\1\s[10]…\w8…\w8。\n\w8\0…\w8…\w8。\n\n\w8\1\s[10]…\w8…\w8。\n\w8\0…\w8…\w8。\n\n\w8\1\s[10]…\w8…\w8おい。\n\w8\w8\0ん？\n\n\w8\1\s[10]何も起こらんぞ。\n\w8\w8\0\s[4]そんなはずは…\w8…\w8…\w8\s[2]わっ！！\w8\-
+
+spell17 : \0\s[3]……拒否。\n\n\w8\1\s[10]またワガママを。\n\w8\0\s[4]だって経験値１０００も減るし。\n\n\w8\1ブルーウィルオーウィスプもランドアーチンも倒せるぞ。\n\w8\0でも、アキンドナイトとマジシャンには効かないし。\n\n\w8\1効いたらギルはいらんだろ。\n\w8\0ギルって誰？\w8\1……。\e
+
+spell18 : \0\s[5]やっと出来たよ、NOILA-TEM。もちろん早掛けで。\n\n\w8\1\s[10]ちゃんと貫通版にしたか？\n\w8\0うん。\w8\s[0]でも、これってどう見ても某レーザーとミサイルだよね。\n\n\w8\1そりゃそーだ。名前を逆から読んでみろ。\n\w8\0メタ\w8…\w8…\w8\s[8]あ、なるほどっ。\e
+
+
+#セーブ
+
+menu.save : \0\s[0]\w8…\w8…\w8…\w8…\w8データのセーブに失敗しました。\w8\1\s[10]データレコーダはちゃんとつないだか？\e
+menu.save : \0\s[0]ココデハ　デキマセン！\w8\1\s[10]納得いく説明はしてくれるんだろうな？\e
+menu.save : \0\s[0]セーブはセイブデパートでしてくださ～い。\w8\1\s[10]なんかスッゲームカつく。\e
+menu.save : \0\s[0]結構いい所まで進んだデータをセーブしようとしてセーブディスクを入れたら満杯で、仕方がないからセーブディスクをもう一枚作ろうと思ったらゲームを一旦終了してユーティリティを立ち上げなきゃいけない事に気が付いた時の心境ってどんなもんだろうね。\w8\1\s[10]セリフ長いぞ。\e
+
+
+#ロード
+
+menu.load : \0\s[4]ピ\w5ー\w5ー\w5ー\w5ー\w5ガー\w5ー\w5ー\w5ー\w5ピ\w5ー\w5ー\w5ー\w5ー\w5ガーギャガギャギャグギャギャガギャギギャガギャガギャギャグギャギャギャグギャギャガギャギギャガギャグギャギャギャグギャギャガギャギギャガギャ\n\n\s[7]あ゛ーうるさいっ！！\n\n\w8\w8\w8\c\s[0]…\w8…\w8…\w8データのロードに失敗しました。\n\n\w8\1\s[11]つーかお前、今データレコーダ蹴ったろ。\n\w8\0失敗しました。\w8\1……。\e
+
+menu.load : \0\s[0]ぼうけんのしょがきえました。\n\n\w8\w8\1\s[10]…\w8…\w8…\w8そういう冗談は嫌いだな、オレは。\n\w8\w8\0ぼうけんのしょがきえました。\n\n\w8\w8\1\s[10]…\w8…\w8…\w8もう一度だけ言う。\w8データはどこだ？\n\w8\w8\0ぼうけんのしょがきえました。\w8\w8\1\s[10]…\w8…\w8…\w8…\w8…\w8\s[10]殺るか。\e
+
+
+#調べる
+
+menu.search : \0\s[0]トクニ　カワッタモノハ　アリマセン\w8\1\s[10]また無視か。\e
+menu.search : \0\s[0]謎の生物がいます。\w8\n\n\1\s[10]オレのことか？\w8\w8\n\0どうしますか？\w8\n\n\q[闘う","searchsub1]\n\q[ディスペル","searchsub2]\n\q[立ち去る","searchsub3]
+
+searchsub1 : \0\s[5]それじゃ、遠慮なく……\w8\1\s[11]目が本気だぞ、お前。\e
+searchsub2 : \1\s[10]オレには効かんぞ。\w8\0\s[0]一応デーモンだしね。\w8\1\s[10]\n一応ってのは何だよ。\w8\w8\0\n\n仲間は呼ばないの？\w8\1\n……呼んだらどうするつもりだ？\e
+searchsub3 : \0\s[5]んじゃ、あとはよろしく～。\w8\1\s[11]抜け駆けは許さん。\e
+
+menu.search : \0\s[0]謎の生物がいます。\w8\n\n\1\s[10]オレのことか？\w8\w8\n\0どうしますか？\w8\n\n\q[食べる","searchsub4]\n\q[踏む","searchsub5]\n\q[財宝のありかを聞く","searchsub6]
+
+searchsub4 : \0\s[0]食べたら変身できるかも。\w8\1\s[10]ロストパワーかよ。\e , \0\s[0]見てくれの悪いものほど美味いっていうしね～。\w8\1\s[11]ちょっと待て。\e
+searchsub5 : \0\s[0]しっぽはよく踏むけどね。\w8\1\s[11]踏むな。\e
+searchsub6 : \0\s[0]確か、暖炉の上の額縁の裏にヘソクリが……\w8\1\s[11]なぜそれを！？\e , \1\s[10]別に何も隠してないぞ。\n\w8\0\s[0]ふ～ん。\w8じゃあ、ベッドの下にあるえっちな本やゲームは……\w8\1すいません。捨てないでください。\e
+
+
+#トル
+
+menu.take : \0\s[0]ソレハ　トレマセン！\w8\1\s[10]$(? 意地でも取りたくなるぞ。 もっと気のきいたセリフはないのか？)\e
+menu.take : \0\s[0]何を取りますか？\n\n\q[${keroname}のしっぽ","takesub1]\n\q[${sakuraname}の帽子","takesub2]\n\q[${sakuraname}のスカート","takesub3]
+
+takesub1 : \0\s[3]ダメ……私にはできない。\w8\1\s[10]地獄を見たければ取るがよい。\e
+
+takesub2 : \0\s[2]それだけはダメっ！\n\n\w8\1\s[10]……\w8別にハゲってわけじゃないぞ。\w8\0\s[7]当たり前でしょ！！\e
+takesub2 : \0\s[3]やだ。\n\n\w8\1\s[10]その帽子は封印だからやめた方がいいぞ。マジで。\e
+
+takesub3 : \0\s[0]\w8…\w8…\w8\s[7]本気で言ってる？\n\n\w8\1\s[10]ウソです。すみません。\e
+takesub3 : \0\s[3]そういうことしたら、せんめんきおじ……\1\s[10]ゴメン。もう言わない。\e
+
+
+#読む
+
+menu.read : \c\q[${sakuraname}の殺戮日記","killdiary]\n\q[同好会（？）一覧","society.list]\n\q[ＴＩＰＳ","tips]\n\n\q[キャンセル","cancel]
+
+
+#殺戮日記
+
+killdiary : \0\s[0]本日の殺戮日記。\n\n\w8${killdiary2}\e
+killdiary2 : ${killdiarysub}\n\n\q[次のページへ","killdiary2]\n\q[閉じる","killdiarycancel]\e
+killdiarycancel : \c\w8\1今日もたくさん殺ったな。\w8\0\s[5]これでまた迷宮の平和が守られたね。\e
+
+killdiarysub : 名前：${o.name}\n属性：$(? 悪 中立)　職業：$(? ミッキーマウスの中に入る人 世界征服 空間プロデューサー 夕日評論家 仏像評論家 変装 サンドイッチマン マジシャン つばめの巣取り 地図作り ジグゾーパズル制作代行 つまようじアーティスト ひよこ鑑定士 殴られ屋 ライター なんちゃってコギャル 勇者 魔王 投稿 同人誌描き 割り箸を袋に詰める 農夫 昼寝 ドットコムガイ 漫才師 痴漢 ストーカー 空き巣 $(? おもいっきりテレビ いただきます 笑っていいとも)の司会 忍者 当り屋 ぷーたろー コンビニ店員 窓拭き ドッター 用務員 呼び込み 元アイドル 首相 煽り コピペ 物干し竿売り 丁稚 お茶汲み ハニーハンター 靴磨き ティッシュ配り ガイシ製造 しめ縄作り 萌え絵師 デバッガー モンスター退治 カビ収集 ハッピーメディアクリエイター マンガ評論家 パン屋 ＪＵＮＫＥＲ 死神 ヒモ ダームの塔の鐘を鳴らす人 オクティ 某悪の軍団構成員 バウンティ・ハンター ドラゴン退治 木こり 職業斡旋 王子 王様 邪神 神の末裔 戦士 盗賊 魔法使い 僧侶 侍 吟遊詩人 賢者 遊び人 ロード サーカス団団員 軍師 将軍 海賊 古物商 聖者 神官 スパムメール作成 シロガネーゼ ロボット操縦 スポーツ冒険家 放送作家 総会屋 コラムニスト 神父 マムシ駆除 傘張り シンガーソングライター)\n処刑：済み\n決め技：${o.skill}\n断末魔：${lword}
+
+
+#同好会一覧
+
+society.list : \0\s[5]\b[2]同好会の一覧だよ～。\w8\n\n$(set b 0 ; foreach a society $(echo ・${a}\n ; inc b ; if $([ ${b} -eq 19 ]) $(set b 0)\x\c\b[2]))\n\w8会員募集中で～す。\w8\1\s[10]やめれって。\e
+
+
+#ＴＩＰＳ
+
+tips : \0\s[5]\b[2]私の秘密を少しだけ教えてあげるね。\w8\n\n・設定のSelf Protectionにある「消滅通告ボタンを必ず表示」にチェックを入れると、メニューからゴーストのアンインストールが出来るようになります。但し、その際は${sakuraname}の設定ファイルも消去されますので、バックアップを忘れずに取っておいてください。\n\w8・帽子をダブルクリックするとメニューが開きますが、六芒星のあたりをクリックすると帽子本来のメッセージが出ます。\n\w8・腕環をダブルクリックすると、現在所有しているアイテムの一覧が出ます。\x\b[2]・迷宮の宝箱に入っているあるアイテムを取ると、「ぶんどる」コマンドでアイテムをゲットできる確率が上がります。\w8\n・クリック判定があるのは帽子・頬・宝珠・胸・スカート・腕環で、触り判定は頭・胸・ももの３ヶ所です。\n\w8・迷宮でのセーブは、下の階に降りた時に自動で行われます。\n\w8・店の開店時間は、酒場は２４時間、電器店が１０：００～２２：００、デパートが１０：００～２０：００、ジャンク屋は毎週月～土の１７：００～２３：００、あとは秘密です。\w8\n・ジャンク屋には、１日に１度新しい品が入ってきます。全ての品には価格帯が定められていて、レアな商品ほど底値が高く、値幅も大きくなります。それぞれの商品の底値を読んで、なるべく安く買うのがコツです。\w8\n・『移動』コマンドで行ける場所には、ある時間帯になると誰かが現れるかもしれません。\w8\1\s[10]試験に出るからメモっとけ。\e
+
+
+#移動
+
+menu.move : \0\s[0]どこに行く？\n\n\w8\q[ギルガメッシュの酒場","move1]\n\q[トレボー城","move2]\n\q[秋葉原","move3]\n\n\q[キャンセル","cancel]\e
+
+move1 : \0\s[-1]\b[-1]\1\s[-1]\b[-1]\w8\w8\w8\1\s[10]\0\s[0]酒場に到着～。\x\0\s[5]ここはいつ来ても賑やかだね～。\n\n\w8$(if $(expr $(rand 3) < 1 ) \0\s[0]あれ？あそこにいるのって……。\n\n\w8\1\s[10]あの胡散臭い風貌、どう見てもＭＲＯＮだな。\x${move1a} \1\s[10]どうやら顔見知りはいないようだな。\n\w8\0\s[0]……別にお酒を飲むわけでもないし、帰ろうか。\w8\1そうだな。\x${move.return})\e
+
+move1a : \0\s[0]ＭＲＯＮ「なんだ、またアンタらか。\w8面倒なら御免だ。俺の事は放っといてくれ」\n\n\w8\1\s[10]まあ、そういう顔をするな。\w8たまにはお前の情報を聞いてやろうと思ってな。\n\w8\0ＭＲＯＮ「それなら２５００ＧＰ払いな。\w8おっと、保証も返金もなしだぜ」\n\n\w8\q[払う","move1a1]\n\q[やめる","move1a2]
+
+move1a1 : $(if $([ ${mayura_gold} < 2500 ]) \0\s[4]お金が足りない～。\x${move1a2} $(dec mayura_gold 2500))\0\s[0]ＭＲＯＮ「${move1a1sub}」\n\n\w8\w8参考になったような、ならないような……。\w8\1\s[10]用も済んだし、さっさと帰るぞ。\x${move.return}\e
+
+move1a2 : \0\s[0]やっぱりやめとこう。\w8なんかアヤしいし。\w8\1\s[10]さっさと帰るぞ。\x${move.return}\e
+
+move1a1sub : 平日の１８時以降にアキバを歩いてみな。機械好きの妙な野郎がうろついてるぜ , チョコレートは早めに買っときな。間違ってもその場で食っちゃいけねえぜ , 珍しいブツを持ってるなら、夜中に骨董屋に行ってみな
+
+move2 : \0\s[-1]\b[-1]\1\s[-1]\b[-1]\w8\w8\w8\1\s[10]\0\s[0]お城に到着～。\x\0\s[8]って、私たちが来た途端に兵隊さんが集まってきたね。\n\n\w8\1\s[10]大した歓迎ぶりだな。\n\w8\0あの様子だと、とても入れそうにないね。\w8\1今日の所は帰るか。\x${move.return}\e
+
+move.return : \0\s[-1]\b[-1]\1\s[-1]\b[-1]\w8\w8\w8\1\s[10]\0\s[5]というわけで、戻ってきたよ～。\e
+
+move3 : \0\s[-1]\b[-1]\1\s[-1]\b[-1]\w8\w8\w8\1\s[10]\0\s[5]アキバに到着～。\x\0\s[0]どこに行く？\n\n\w8\q[街中を散歩","move3b]\n\q[大型電器店","move3c]\n\q[デパート","move3d]\n\q[怪しい骨董屋","move3e]\n\q[怪しいジャンク屋","move3f]\n\n\q[帰る","move.return]
+
+move3a : \1\b[-1]\0\s[0]アキバにいるけど、どこに行く？\n\n\w8\q[街中を散歩","move3b]\n\q[大型電器店","move3c]\n\q[デパート","move3d]\n\q[怪しい骨董屋","move3e]\n\q[怪しいジャンク屋","move3f]\n\n\q[帰る","move.return]
+
+move3b : $(if $(expr ( ${collectorflag} == 0 ")" & ( $(date %w) != 0 ")" & ( $(date %w) != 6 ")" & ( $(date %k) >= 18 ")" & ( $(date %k) <= 20 ")" & ( $(size itemlist) > 0 ")" ) ${move3b1} \0\s[0]…………最近は電気街巡りもイマイチだね～。\n\n\w8\1\s[10]昔に比べるとこの界隈も小ぎれいになっちまったからな。\n\w8\0特にめぼしいものもないし、戻ろうか。\w8\1だな。\x${move3a}\e)
+
+move3b1 : $(set collectorflag 1 ; set a $(rand $(expr $(size shopitem) / 2 )) ; set b $(get shopitem $(expr ${a} * 2)) ; set c $(get shopitem $(expr ${a} * 2 + 1)) ; if $([ ${c} -eq 1 ]) $(set d $(expr ( $(rand 100) + 10 ")" * 100 )) ; if $([ ${c} -eq 2 ]) $(set d $(expr ( $(rand 200) + 100 ")" * 100 )) ; if $([ ${c} -eq 3 ]) $(set d $(expr ( $(rand 300) + 300 ")" * 100 )) ; if $([ ${c} -eq 4 ]) $(set d $(expr ( $(rand 400) + 600 ")" * 100 )) ; if $([ ${c} -eq 5 ]) $(set d $(expr ( $(rand 500) + 1000 ")" * 100 )) ; if $([ ${c} -eq 6 ]) $(set d $(expr ( $(rand 500) + 1500 ")" * 100 )) ; if $([ ${c} -eq 7 ]) $(set d $(expr ( $(rand 1000) + 2000 ")" * 100 )) ; if $([ ${c} -eq 8 ]) $(set d $(expr ( $(rand 2000) + 3000 ")" * 100 )) ; if $([ ${c} -eq 9 ]) $(set d $(expr ( $(rand 2000) + 3000 ")" * 100 )) ; set c $(expr ${d} * 2))\0\s[0]あれ？あの人……。\n\n\w8\1\s[10]見覚えのある顔だな。\n\w8\0確か、この辺では有名なコレクターだったよね。\x\0\s[0]男「あ、ども」\n\n\w8\1よう。今日は何探してんだ？\n\w8\0男「${b}が欲しいんですけど、なかなか出物がなくて。\w8￥${c}くらいなら即ゲットなんですけどね」\n\n\w8$(set d 0 ; foreach a itemlist $(if $([ ${a} == ${b} ]) $(set d 1)) ; if $([ ${d} -eq 1]) \w8……それなら持ってるけど。\n\n\w8男「本当ですか？！ぜひ譲ってください。お願いします。この通りです」\n\n\w8\1ああ言ってるが、どうする？\w8\0\q[譲る","move3b2]\n\q[譲らない","move3b3] うーん……\w8それは持ってないね。\n\n\w8\w8男「そうですか……\w8見つかったら教えてください。\w8それじゃ」\w8\w8\1……行っちまった。\n\w8\0\n\n私たちも帰ろっか。\x${move3a})\e
+
+move3b2 : $(clear a ; set d 0 ; loop $(size itemlist) $(set e $(get itemlist ${d}) ; if $([ ${e} != ${b} ]) $(adddict a ${e}) $(clear b) ; inc d) ; clear itemlist ; set d 0 ; loop $(size a) $(adddict itemlist $(get a ${d}) ; inc d) ; inc mayura_gold ${c})\0\s[0]売ったよ～。\n\n\w8現在の所持金：￥${mayura_gold}\n\n\w8男「ありがとうございました。\w8それじゃ」\n\n\w8\w8\1\s[10]……かなり高く売れたな。\w8\0ちょっともったいない気もするけど、まあいっか。\x${move3a}\e
+
+move3b3 : \0\s[0]せっかくのコレクションを、そう簡単には譲れないよね～。\n\n\w8\1\s[10]そういうことだ。悪いな。\n\w8\0男「……そうですか。\w8わかりました。気が変わったら声かけてください。\w8それじゃ」\n\n\w8\w8\1……行っちまった。\n\w8\0私たちも帰ろっか。\x${move3a}\e
+
+move3c : $(if $(expr ( $(date %k) >= 10 ")" & ( $(date %k) <= 21 ")") ${move3c1} ${move3c3})\e
+
+move3c1 : \0\s[5]電器屋さんはいつ来てもワクワクするね～。\n\n\w8\1\s[10]まあな。\w8\nで、なんか買ってくのか？\n\w8\0\s[0]え～っと……何を買おうかな。\n\n\w8\q[テレビ","move3c4]\n\q[洗濯機","move3c5]\n\q[時計","move3c6]\n\q[ラジオ","move3c7]\n\q[ビデオデッキ","move3c8]\n\n\q[やめる","move3.cancel]\e
+
+move3c2 : \1\b[-1]\0\s[0]え～っと……何を買おうかな。\n\n\w8\q[テレビ","move3c4]\n\q[洗濯機","move3c5]\n\q[時計","move3c6]\n\q[ラジオ","move3c7]\n\q[ビデオデッキ","move3c8]\n\n\q[やめる","move3.cancel]\e
+
+move3c3 : \0\s[2]……あ、電器屋さん閉まってる。\n\n\w8\1\s[10]ま、この時間じゃ仕方ないな。\w8\0\s[4]……戻ろう。\x${move3a}\e
+
+move3c4 : \0\s[5]そろそろ大画面のテレビが欲しいよね～。\n\n\w8\1\s[10]それならもう持ってるだろ。\n\w8\0\s[8]じゃあ、最近買ったゲーム機用に１４インチくらいのを……\n\n\w8\1そんなの部屋中にゴロゴロあるぞ。\n\w8\0だったら、お風呂用に防水テレビ……\n\n\w8\1それもとっくに持ってるだろうが。\n\w8\w8\0\s[7]……って、それじゃ何も買えないでしょ！\n\n\w8\1\s[11]買わんでいいっ！！\w8\0\s[4]……む～。\x${move3c2}\e
+
+move3c5 : \0\s[3]ウチに洗濯機ってあったっけ？\n\n\w8\1\s[10]あるに決まってんだろ。\n\w8\0\s[0]……全然覚えがないんだけど。\w8\1お前が家事に無関心すぎるだけだ。\x${move3c2}\e
+
+move3c6 : \0\s[0]そういえば、ウチに時計ってないよね。\n\n\w8\1\s[10]ゲームウォッチなら掃いて捨てるほどあるけどな。\n\w8\0あれって、ちゃんと時間合わせてあるの？\n\n\w8\1……わからん。\w8\0\s[4]……。\x${move3c2}\e
+
+move3c7 : $(set b 0 ; foreach a itemlist $(if $([ ${a} == "ラジオ" ]) $(set b 1)) ; if $([ ${b} -eq 1 ]) \0\s[0]ラジオはもう持ってるよ。\x${move3c2} \0\s[2]そうだ！私、ラジオが欲しかったんだ。\n\n\w8\1\s[10]って、もう持ってるだろ。\n\w8\0\s[7]あんなガラクタじゃなくて、もっといいのが欲しいの。\n\n\w8\1\s[10]ガラクタとは失礼な。このオレが廃品をかき集めて作った生粋の鉱石ラジオを……\w8\0\s[4]はいはい。\x\1\b[-1]\0\s[0]ラジオは１９８０円だけど、買う？\n\n\w8\q[買う","move3c71]\n\q[買わない","move3c72]\e)
+
+move3c71 : $(if $([ ${mayura_gold} -ge 2079 ]) $(dec mayura_gold 2079 ; adddict itemlist "ラジオ")\0\s[5]買ったよ～。\w8消費税込で２０７９円だって。\w8\n\nついでにポイントが１３％付いて……\w8\1\s[10]用が済んだら帰るぞ。 \0\s[4]む～、お金が足りない～。\w8\1\s[10]迷宮でもっと稼がんとな。)\x${move3c2}\e
+
+move3c72 : \0\s[4]え～、買わないの？\n\n\w8\1ムダ使いはいかん。オレの鉱石ラジオで十分だ。\w8\0む～。\x${move3c2}\e
+
+move3c8 : \0\s[5]ビデオデッキって便利だよね～。\n\n\w8\1\s[10]昔はこんなものなかったもんな。\n\w8\0おかげでパソコンサンデーもゲームセンターあらしもばっちりチェックできるね。\n\n\w8\1１１ＰＭもな。\w8\0\s[4]……それはいいから。\x${move3c2}\e
+
+move3d : $(set b 0 ; foreach a itemlist $(if $([ ${a} == "チョコレート" ]) $(set b 1)) ; if $([ ${b} -eq 1 ]) ${move3d4} $(if $(expr ( $(date %k) >= 10 ")" & ( $(date %k) <= 19 ")") ${move3d1} ${move3d3}))\e
+
+move3d1 : \1\s[10]デパートに来たのはいいが、何か用でもあるのか？\n\w8\0\s[5]下の階からおいしそうな匂いがするね。行ってみようよ。\n\n\w8\1……洋服には目もくれずデパ地下かよ。\x\0\s[5]うわ～、食べ物がいっぱいあるよ。\n\n\w8\1\s[10]そりゃデパ地下だからな。\n\w8\w8\0\s[2]あーっ！\n\n\w8\1今度は何だ。\n\w8\0……見て！あそこに大っきなチョコレートが！\n\n\w8\1バレンタインデーの展示品だろ……って、聞いてるか？\x\1\s[10]それにしてもデカいチョコだな。ハート型で、ざっと全幅２メートルはあるぞ。\w8でも、５０万円ってのは高いな。\n\0\s[1]これ欲しいなぁ……。\n\n\w8\1ンなもん買ってどうするつもりだ？\w8やっぱ、誰かに……\n\w8\0\s[5]自分で食べるに決まってるでしょ。バリバリと。\w8\1……お前に女の子らしい反応を期待するのが間違いだった。\x\1\s[10]で、本当に買うのか？\n\w8\0\s[5]そりゃもちろん……\n\n\w8\q[買う！","move3d2]\n\q[やっぱりやめる","move3d3]
+
+move3d2 : $(if $([ ${mayura_gold} -lt 500000 ]) \0\s[4]……って、お金が足りない～。\n\n\w8\1\s[10]だからやめとけって。\w8\0しょうがない、帰ろう。 $(dec mayura_gold 500000 ; adddict itemlist "チョコレート")\0\s[5]買ったよ～。\w8さ～、帰って食べようっと。\n\n\w8\1\s[10]やれやれ。)\x${move3a}
+
+move3d3 : \0\s[4]え～、買わないの？\n\n\w8\1\s[10]ムダ使いはいかん。\w8\0そんな～。\x${move3a}\e
+
+move3d4 : \0\s[0]デパートに行っても面白くないよね。\n\n\w8\1\s[10]こんな所でのんびりと買い物している暇があるなら、一店でも多くジャンク屋を回るべきだ。\w8\0そうそう。\x${move3a}\e
+
+move3d9 : \0\s[0]シャッターが降りてるよ。\n\n\w8\1\s[10]何か張り紙がしてあるな。\n\w8\0えーっと……\n\n\w8『ただいま店内大改装中。またのご来店をお待ちしております』\n\n\w8だって。\n\n\w8\1諦めて帰るしかなさそうだな。\x${move3a}\e
+
+move3e : $(if $(expr ( $(date %w) != 0 ")" & ( $(date %w) != 6 ")" & ( $(date %k) >= 0 ")" & ( $(date %k) <= 5 ")" & ( $(size itemlist) > 0 ")" ) \0\s[0]老店主「いらっしゃい」\n\n\w8\s[0]さて、どうする？\n\n\w8\q[アイテムを売る","move3e1]\n\q[やめる","move3.cancel] \0\s[3]……こんな所あったっけ？\n\n\w8\1\s[10]よほどの通でもなければ知らんだろうな。\n\w8表向きは陰気な骨董屋、その実態はこの世のあらゆるものを買い取って右から左に転がす闇ブローカーだ。\n\w8\0\s[4]なんでそういうとこ知ってるかなぁ。\x\1\b[-1]\0\s[0]でも、お店閉まってるよ。\n\n\w8\1\s[10]今日は休みらしいな。出直すか。\x${move3a})
+
+move3e1 : \0\s[0]\b[2]$(set a 0 ; loop $(size itemlist) $(eval "\_q"$(expr ${a} + 1)"."$(get itemlist ${a})"\n\_q" ; inc a))\n\w8どれを売る？$(set teachflag "move3e2")\![open","teachbox]\n\n\q[やめる","move3.cancel]\e
+
+move3e2 : $(set a ${teach.sentence} ; set teachflag 0 ; set b $(size itemlist) ; if $(expr ( ${a} >= 1 ")" & ( ${a} <= ${b} ")") ${move3e3} \0\s[4]そんな番号ないよ～。\x${move3e1})
+
+move3e3 : $(set d $(get itemlist $(expr ${a} - 1)) ; set b 0 ; set e 0 ; loop $(size ghostitem) $(set c $(get ghostitem ${b}) ; if $([ ${c} == ${d} ]) $(set e $(get ghostitem $(expr ${b} + 1))) ; inc b) ; if $([ ${e} -eq 0 ]) $(set a 0 ; loop $(size shopitem) $(set b $(get shopitem ${a}) ; if $([ ${d} == ${b} ]) $(set c $(get shopitem $(expr ${a} + 1))) ; inc a) ; if $([ ${c} -eq 1 ]) $(set e $(expr ( $(rand 100) + 10 ")" * 100 / 2 )) ; if $([ ${c} -eq 2 ]) $(set e $(expr ( $(rand 200) + 100 ")" * 100 / 2 )) ; if $([ ${c} -eq 3 ]) $(set e $(expr ( $(rand 300) + 300 ")" * 100 / 2 )) ; if $([ ${c} -eq 4 ]) $(set e $(expr ( $(rand 400) + 600 ")" * 100 / 2 )) ; if $([ ${c} -eq 5 ]) $(set e $(expr ( $(rand 500) + 1000 ")" * 100 / 2 )) ; if $([ ${c} -eq 6 ]) $(set e $(expr ( $(rand 500) + 1500 ")" * 100 / 2 )) ; if $([ ${c} -eq 7 ]) $(set e $(expr ( $(rand 1000) + 2000 ")" * 100 / 2 )) ; if $([ ${c} -eq 8 ]) $(set e $(expr ( $(rand 2000) + 3000 ")" * 100 / 2 )) ; if $([ ${c} -eq 9 ]) $(set e $(expr ( $(rand 2000) + 3000 ")" * 100 / 2 ))) )\0\s[0]\b[0]老店主「${d}$(? か……まあ、 なら、 か……それなら、 ときたか。それなら)￥${e}$(? ってとこだな ってとこだろうな あたりでどうだ？)」\n\n\w8\q[売る","move3e4]\n\q[やめる","move3e.cancel]
+
+move3e4 : $(clear a ; set b 0 ; loop $(size itemlist) $(set c $(get itemlist ${b}) ; if $([ ${c} != ${d} ]) $(adddict a ${c}) $(clear d) ; inc b) ; clear itemlist ; set b 0 ; loop $(size a) $(adddict itemlist $(get a ${b}) ; inc b) ; inc mayura_gold ${e})\0\s[0]売ったよ～。\n\n\w8現在の所持金：￥${mayura_gold}\n\n\w8$(if $(expr $(size itemlist) == 0 ) ……もう売るものもないし、帰ろうか。\w8\1\s[10]そうだな。\x${move3a} \q[他のアイテムを売る","move3e1]\q[帰る","move3.cancel])\e
+
+move3e.cancel : \0\s[0]うーん、やっぱりやめよう。\n\n\w8他に何か売る？\n\n\w8\q[売る","move3e1]\n\q[やめる","move3.cancel]
+
+move3f : $(if $(expr ( $(date %w) != 0 ")" & ( $(date %k) >= 17 ")" & ( $(date %k) <= 22 ")" & ( $(size shopitemlist) > 0 ")" ) \0\s[5]今日は何が出てるかな～。\n\n\w8\1\s[10]今回の出物は……ざっとこんなとこだな。\n\w8\0\_q${shopsub}\n\_q\w8現在の所持金：￥${mayura_gold}\w8\1……何か買うか？\n\n\w8\q[買う","move3f1]\n\q[買わない","move3.cancel] \0\s[5]ここはよく来るよね。\n\n\w8\1\s[10]オレらにしてみりゃ金鉱みたいなもんだ。\n\w8\0\s[0]……あれ？閉まってるね。\n\n\w8\1営業時間外か。出直すしかないな。\x${move3a}\e)
+
+move3f1 : \0\s[0]\_q${shopsub}\n\_q\w8現在の所持金：￥${mayura_gold}\w8\1……どれを買う？$(set teachflag "move3f2")\![open","teachbox]\n\n\q[やめる","move3.cancel]\e
+
+move3f2 : $(set a ${teach.sentence} ; set teachflag 0 ; set b $(size shopitemlist) ; if $(expr ( ${a} >= 1 ")" & ( ${a} <= ${b} ")") ${move3f3} \0\s[4]そんな番号ないよ～。\x${move3f1})
+
+move3f3 : $(set d $(get shopitemprice $(expr ${a} - 1 )) ; if $([ ${d} -gt ${mayura_gold} ]) \0\s[4]お金が足りないよ～。\x${move3f1} $(set c $(get shopitemlist $(expr ${a} - 1 )) ; adddict itemlist ${c} ; dec mayura_gold ${d} ; clear a ; clear b ; clear d ; set e 0 ; loop $(size shopitemlist) $(set f $(get shopitemlist ${e}) ; if $([ ${f} != ${c} ]) $(adddict a ${f} ; adddict b $(get shopitemlist2 ${e}) ; adddict d $(get shopitemprice ${e})) ; inc e) ; clear shopitemlist ; clear shopitemlist2 ; clear shopitemprice ; set e 0 ; loop $(size a) $(adddict shopitemlist $(get a ${e}) ; adddict shopitemlist2 $(get b ${e}) ; adddict shopitemprice $(get d ${e}) ; inc e))${c}を買ったよ～。\n\n\w8$(if $(expr $(size shopitemlist) == 0 ) ……他にめぼしい物はないみたいだね。\w8\1今日のところは帰るか。\x${move3a} 他に何か買う？\w8\n\n\q[買う","move3f1]\q[やめる","move3.cancel]))\e
+
+shopsub : $(set a 0 ; loop $(size shopitemlist) $(eval $(expr ${a} + 1)"."$(get shopitemlist ${a})"　￥"$(get shopitemprice ${a})"\n" ; inc a))
+
+move3.cancel : \0\s[0]特に用事もないし、戻ろう。\w8\1\s[10]そうだな。\x${move3a}\e
+
+
+#オプション
+
+option : $(set a $(size checksitenamelist) ; if $([ ${a} -eq 0 ]) \q[トーク頻度調整","option1]\n\q[名前を登録","option8]\n\q[見切れ判定ＯＮ・ＯＦＦ","option2]\n\q[自動時計合わせＯＮ・ＯＦＦ","option3]\n\q[ランダムサーチＯＮ・ＯＦＦ","option4]\n\q[『ユーザーのおすすめ』編集","option6]\n\n\q[やっぱりいい","cancel] \q[トーク頻度調整","option1]\n\q[名前を登録","option8]\n\q[見切れ判定ＯＮ・ＯＦＦ","option2]\n\q[自動時計合わせＯＮ・ＯＦＦ","option3]\n\q[ランダムサーチＯＮ・ＯＦＦ","option4]\n\q[おすすめの表示切替","option7]\n\q[巡回モードＯＮ・ＯＦＦ","option5]\n\q[『ユーザーのおすすめ』編集","option6]\n\n\q[やっぱりいい","cancel])
+
+option1 : \0\s[5]私たちがどのくらい喋るか決めてね。\n\w8今の設定は「${option1g}」だよ。\w8\n\n\q[喋らない","option1a]\n\q[忘れた頃に喋る （１０分間隔）","option1b]\n\q[ごくたまに喋る （５分間隔）","option1c]\n\q[たまに喋る （２分間隔）","option1d]\n\q[よく喋る （１分間隔）","option1e]\n\q[かなり喋る （３０秒間隔）","option1f]
+
+option1a : $(set talkflag 0 ; set talkcount 0)\w8\1喋るなって言ってるぞ。\w8\0\s[4]シテオクだね。\e
+option1b : $(set talkflag 20 ; set talkcount 0)\0\s[4]……\w8帰ろうかな。\e
+option1c : $(set talkflag 10 ; set talkcount 0)\0\s[4]……。\e
+option1d : $(set talkflag 4 ; set talkcount 0)\0\s[0]……ま、いいけど。\e
+option1e : $(set talkflag 2 ; set talkcount 0)\0\s[5]りょ～かい。\e
+option1f : $(set talkflag 1 ; set talkcount 0)\0\s[5]キミも好きだね～。\w8\1同志よ。\e
+
+option1g : $(if $([ ${talkflag} -eq 0 ]) 喋らない ; if $([ ${talkflag} -eq 20 ]) 忘れた頃に喋る ; if $([ ${talkflag} -eq 10 ]) ごくたまに喋る ; if $([ ${talkflag} -eq 4 ]) たまに喋る ; if $([ ${talkflag} -eq 2 ]) よく喋る ; if $([ ${talkflag} -eq 1 ]) かなり喋る)
+
+option2 : \0\s[0]見切れなんだけど……\w8\n\n\q[気になる","option2a]\n\q[気にしない","option2b]
+
+option2a : $(set mf 0 ; set mikireflag 0)\0\s[0]やっぱり気になるよね～。\e
+option2b : $(set mf 0 ; set mikireflag 1)\0\s[5]別に気にならないよね～。\e
+
+option3 : \0\s[0]私が代わりに時計を合わせてあげるけど、どうする？\n\w8今の設定は「$(if $([ ${sntpflag} -eq 0 ]) 自分でやる ${sakuraname}が合わせる)」だよ。\w8\n\n\q[お願いする","option3a]\n\q[自分でやる","option3b]
+
+option3a : \0\s[5]じゃ、呼ばれた時にやっておくね。$(set sntpflag 1)\e
+option3b : \0\s[0]……ま、いいけど。$(set sntpflag 0)\e
+
+option4 : \0\s[0]ちょっとだけインターネットで遊んでもいい？\n\w8今の設定は「$(if $([ ${rsearchflag} -eq 0 ]) ダメ いいよ)」だよ。\w8\n\n\q[ダメ","option4a]\n\q[いいよ","option4b]
+
+option4a : \0\s[4]む～。$(set rsearchflag 0)\e
+option4b : \0\s[5]ありがと～。\w8\1\s[10]どーせロクな事に使わんぞ。$(set rsearchflag 1)\e
+
+option5 : \0\s[0]『ユーザーのおすすめ』に入っているサイトを巡回するよ～。\n\w8今の設定は「$(if $([ ${checksiteflag} -eq 0 ]) 巡回モードＯＦＦ 巡回モードＯＮ)」、巡回間隔は${checksitetime}分だよ。\w8\n\n\q[巡回モードＯＮ","option5a]\n\q[巡回モードＯＦＦ","option5b]
+
+option5a : \0\s[5]何分おきに巡回する？$(set teachflag "option5a1")\![open","teachbox]\e
+
+option5a1 : ${teach.sentence}分おきね。りょ～かい。$(set checksitetime ${teach.sentence} ; set checksiteflag 1)\e
+
+option5b : \0\s[4]む～。$(set checksiteflag 0)\e
+
+option6 : \0\s[0]\b[2]『ユーザーのおすすめ』を編集するよ。\n\n\_q$(set a 1 ; foreach b checksitenamelist $(echo ${a}.${b}\n ; inc a))\_q\n$(set a $(size checksitenamelist) ; if $([ ${a} -eq 0 ]) \q[リストに追加","option6a]\n\q[終了","option6c] \q[リストに追加","option6a]\n\q[リストから削除","option6b]\n\q[終了","option6c])\e
+
+option6a : \0\s[0]\b[0]追加するサイトの名前は？\w8$(set teachflag "option6a1")\![open","teachbox]\e
+option6a1 : $(set checksitename ${teach.sentence})\0\s[0]そのサイトのＵＲＬは？$(set teachflag "option6a2")\![open","teachbox]\e
+option6a2 : $(set checksiteurl ${teach.sentence})\0\s[0]\b[0]えーっと、サイト名は\n「${checksitename}」\nＵＲＬは\n「${checksiteurl}」\nでいい？\n\n\w8\q[いいよ","option6a3]\n\q[間違った","option6a]\n\q[やめる","option6cancel]\e
+option6a3 : $(set teachflag 0 ; adddict checksitenamelist ${checksitename} ; adddict checksiteurllist ${checksiteurl})\0\s[5]\b[0]登録したよ～。\x\c${option6}\e
+option6cancel : $(set teachflag 0)\0\s[4]\b[0]む～。\x\c${option6}\e
+
+option6b : \0\s[0]\b[2]\_q$(set a 1 ; foreach b checksitenamelist $(echo ${a}.${b}\n ; inc a))\_q\n\n何番目のリストを消す？$(set teachflag "option6b1")\![open","teachbox]\e
+option6b1 : $(set teachflag 0 ; set a ${teach.sentence} ; set checksitename "#" ; set b 1 ; foreach c checksitenamelist $(if $([ ${a} -eq ${b} ]) $(set checksitename ${c} ; set erasesitenumber ${b} ; inc b) $(inc b)) ; if $([ ${checksitename} == "#" ]) ${option6b1.err} ${option6b1.erase})
+
+option6b1.err : \0\s[4]\b[0]番号間違えてない？\x\c${option6b}\e
+option6b1.erase : \0\s[0]\b[0]「${checksitename}」を消してもいい？\n\n\w8\q[ＯＫ","option6b3]\n\q[やっぱやめ","option6b2]\e
+
+option6b2 : \0\s[4]\b[0]む～。\x\c${option6}\e
+option6b3 : $(set a 1 ; clear c ; foreach b checksitenamelist $(if $([ ${a} -eq ${erasesitenumber} ]) $(inc a) $(adddict c ${b} ; inc a)) ; clear checksitenamelist ; foreach d c $(adddict checksitenamelist ${d}) ; set a 1 ; clear c ; foreach b checksiteurllist $(if $([ ${a} -eq ${erasesitenumber} ]) $(inc a) $(adddict c ${b} ; inc a)) ; clear checksiteurllist ; foreach d c $(adddict checksiteurllist ${d}))\0\s[5]消したよ～。\x\c${option6}\e
+
+option6c : \0\s[0]\b[0]編集終了～。\e
+
+option7 : \0\s[0]どっちのおすすめを表示する？\n\n\w8\q[${sakuraname}のおすすめ","option7a]\n\q[ユーザーのおすすめ","option7b]\e
+
+option7a : \0\s[5]りょ～かい。$(set recommendsiteflag 0)\e
+option7b : \0\s[5]おっけ～。$(set recommendsiteflag 1)\e
+
+option8 : \0\s[5]キミの名前を教えて。\w8$(set teachflag "option8a")\n\n\q[やめる","option8cancel]\![open","teachbox]\e
+
+option8a : $(if $([ #${teach.sentence} == "#" ]) \0\s[4]何も入力されてないよ～。\x${option8} ${option8b})\e
+
+option8b : \0\s[0]${teach.sentence}さんでいい？\n\n\w8\q[ＯＫ","option8c]\n\q[間違えた","option8]\e
+
+option8c : \0\s[5]$(set teachflag 0 ; set playername ${teach.sentence})覚えたよ～。\e
+
+option8cancel : $(set teachflag 0)\0\s[4]\b[0]む～。\e
+
+
+#サブゲーム
+
+menu.game : \q[迷宮に入る","menu.adv]\n\n\q[やめとく","cancel]
+
+
+#--------------------------------------------------------------------------
+#右クリックメニュー
+
+
+#消滅ボタン
+
+resource.vanishbuttoncaption : ${sakuraname}のアンインストール
+resource.vanishbuttonvisible : 0
+
+
+#更新ＵＲＬ・おすすめ
+
+resource.homeurl : "http://mayura.jp/ghost/update/"
+
+resource.sakura.recommendbuttoncaption : $(if $([ ${recommendsiteflag} -eq 1 ]) $(echo "ユーザーのおすすめ(&R)") $(echo "おすすめ(&R)"))
+resource.kero.recommendbuttoncaption : 黒うにゅうのおすすめサイト(&R)
+resource.sakura.portalbuttoncaption : ポータル(&L)
+
+resource.sakura.portalsites : $(set i 0 ; eval "$(urllist"$(foreach i portalsites $(echo " \""${i}"\""))")")
+
+portalsites : "mayura．jp","http://mayura.jp"," "
+portalsites : "うさださくら","http://usada.sakura.vg/"," "
+portalsites : "C．R．O．W．official page","http://crow.aqrs.jp/"," "
+portalsites : "SSP（en）BUGTRAQ","http://ssp.shillest.net/"," "
+
+
+resource.sakura.recommendsites : $(set i 0 ; if $([ ${recommendsiteflag} -eq 1 ]) $(set a $(size checksitenamelist) ; clear checksites ; set b 0 ; loop ${a} $(adddict checksites $(get checksitenamelist ${b}) ; adddict checksites $(get checksiteurllist ${b}) ; adddict checksites " " ; inc b) ; eval "$(urllist"$(foreach i checksites $(echo " \""${i}"\""))")") $(eval "$(urllist"$(foreach i recommendsites $(echo " \""${i}"\""))")"))
+
+recommendsites : "ナムコ","http://www.namco.co.jp/"," "
+recommendsites : "カプコン","http://www.capcom.co.jp/"," "
+recommendsites : "コナミ","http://www.konami.co.jp/"," "
+recommendsites : "セガ","http://www.sega.co.jp/"," "
+recommendsites : "新日本企画","http://www.snkplaymore.co.jp/"," "
+recommendsites : "タイトー","http://www.taito.co.jp/"," "
+recommendsites : "スクウェア","http://www.square-enix.co.jp/"," "
+recommendsites : "ゲームアーツ","http://www.gamearts.co.jp/"," "
+recommendsites : "ハドソン","http://www.hudson.co.jp/"," "
+recommendsites : "ジャレコ","http://www.jaleco.co.jp/"," "
+recommendsites : "アイレム","http://www.irem.co.jp/"," "
+recommendsites : "日本物産","http://www.nichibutsu.co.jp/"," "
+recommendsites : "テーカン","http://www.tecmo.co.jp/"," "
+recommendsites : "サン電子","http://www.sun-denshi.co.jp/soft/"," "
+recommendsites : "セタ","http://www.seta.co.jp/"," "
+recommendsites : "エポック社","http://www.epoch.gr.jp/"," "
+recommendsites : "ビスコ","http://www.visco.co.jp/"," "
+recommendsites : "カルチャーブレーン","http://www.culturebrain.co.jp/"," "
+recommendsites : "ゲームスタジオ","http://www.gamestudio.co.jp/"," "
+recommendsites : "サクセス","http://www.success-corp.co.jp/"," "
+recommendsites : "-","-","-"
+recommendsites : "日本ファルコム","http://www.falcom.com/"," "
+recommendsites : "システムソフト","http://www.systemsoft.co.jp/"," "
+recommendsites : "ボーステック","http://www.bothtec.co.jp/"," "
+recommendsites : "マイクロキャビン","http://www.microcabin.co.jp/"," "
+recommendsites : "Ｔ＆Ｅソフト","http://www.deep-inc.co.jp/"," "
+recommendsites : "エニックス","http://www.square-enix.co.jp/"," "
+recommendsites : "ＳＰＳ","http://www.sps.co.jp/"," "
+recommendsites : "工画堂スタジオ","http://www.kogado.com/"," "
+recommendsites : "アスキー","http://www.ascii.co.jp/"," "
+recommendsites : "ＨＡＬ研究所","http://www.hallab.co.jp/"," "
+recommendsites : "コンパイル","http://www.aiky.biz/"," "
+recommendsites : "ソフトウェアスタジオＷＩＮＧ","http://st-wing.net/"," "
+recommendsites : "光栄","http://www.koei.co.jp/"," "
+recommendsites : "アートディンク","http://www.artdink.co.jp/"," "
+recommendsites : "データウエスト","http://www.datawest.co.jp/"," "
+recommendsites : "チュンソフト","http://www.chunsoft.co.jp/"," "
+recommendsites : "日本テレネット","http://www.telenet.co.jp/"," "
+recommendsites : "マイクロネット","http://www.micronetclub.co.jp/"," "
+recommendsites : "ファミリーソフト","http://www.familysoft.co.jp/"," "
+recommendsites : "風雅システム","http://www.toyama-smenet.or.jp/~fuga/"," "
+recommendsites : "アリスソフト","http://www.alicesoft.com/"," "
+recommendsites : "新日本プログラミング","http://members.aol.com/njprog/"," "
+recommendsites : "ズーム","http://www.zoom-inc.co.jp/"," "
+
+resource.kero.recommendsites : $(set i 0 ; eval "$(urllist"$(foreach i recommendsites2 $(echo " \""${i}"\""))")")
+
+recommendsites2 : "プロジェクトEGG","http://www.soft-city.com/egg/"," "
+recommendsites2 : "なつゲー","http://game.coden.ntt.com/"," "
+recommendsites2 : "GameX-Game．excite","http://game.excite.co.jp/gamex/"," "
+recommendsites2 : "Game@nifty：レトロゲーム","http://game.nifty.com/play/list/genre/RET/1.jsp"," "
+recommendsites2 : "BBソフト","http://bbsoft.jp/"," "
+recommendsites2 : "RetroPC．NET","http://retropc.net/"," "
+recommendsites2 : "Amusement Center","http://www.amusement-center.com/index.html"," "
+recommendsites2 : "-","-","-"
+recommendsites2 : "ALL ABOUT ベーマガ","http://www.north-wind.ne.jp/~yoshino/contents.htm"," "
+recommendsites2 : "Baboo！JAPAN","http://www.baboo.net/"," "
+recommendsites2 : "Tagoo","http://www4.airnet.ne.jp/makuta/tagoo/"," "
+recommendsites2 : "懐ぱそリンク","http://opclink.coh.jp/progles.htm"," "
+recommendsites2 : "CLASSIC VIDEOGAME STATION ODYSSEY","http://www.ne.jp/asahi/cvs/odyssey/index.html"," "
+recommendsites2 : "OLD－COMPUTERS．COM","http://www.old-computers.com/news/default.asp"," "
+recommendsites2 : "レトロゲームファンクラブ","http://www.abz.jp/~rgf/"," "
+recommendsites2 : "ゲームセンターあらし公式サイト","http://www.m-sugaya.com/arashi/"," "
+recommendsites2 : "得物屋24時間","http://www.pekori.jp/~emonoya/"," "
+recommendsites2 : "MSX3 －OUT OF MEMORY－","http://naramura.kdn.ne.jp/msx3/"," "
+recommendsites2 : "namco ’70－’80’s VIDEO GAMES MUSEUM","http://qtchicks.hp.infoseek.co.jp/namco.html"," "
+recommendsites2 : "SEGA MARK-III webpage","http://www6.airnet.ne.jp/tera/sega/index.html"," "
+recommendsites2 : "遊想雑貨","http://homepage1.nifty.com/HOBBYLIFE/"," "
+recommendsites2 : "Attic or Garret","http://www.itoi.co.jp/attic/index.html"," "
+recommendsites2 : "DigiBarn Computer Museum","http://www.digibarn.com/"," "
+recommendsites2 : "iTA-Choco Systems","http://harp.ruru.ne.jp/difficult/rasho/"," "
+recommendsites2 : "古い男の部屋","http://homepage2.nifty.com/furuiotoko/index.html"," "
+recommendsites2 : "開発室Pixel","http://hp.vector.co.jp/authors/VA022293/"," "
+recommendsites2 : "Das virtuelle Computermuseum","http://members.aol.com/chrzahn/index.html"," "
+recommendsites2 : "バンゲリング帝国復興計画","http://www.geocities.co.jp/Playtown/3006/"," "
+recommendsites2 : "わいじんズ","http://www.yjinn.com/"," "
+recommendsites2 : "Historic Personal Computer Leaflets","http://web.kyoto-inet.or.jp/people/s-oga/"," "
+recommendsites2 : "魔法使いの森","http://www.wizforest.com/"," "
+recommendsites2 : "アルゴの記憶","http://www.geocities.co.jp/SiliconValley-Sunnyvale/2521/"," "
+recommendsites2 : "１９８Ｘ","http://www5d.biglobe.ne.jp/~t-suzuki/"," "
+recommendsites2 : "Nostalgia","http://aizuma.hp.infoseek.co.jp/"," "
+recommendsites2 : "Jun Amano’s Homepage","http://homepage3.nifty.com/lsigame/"," "
+recommendsites2 : "gigamix online.com","http://gigamix.cocolog-nifty.com/"," "
+recommendsites2 : "ゲームショップ１９８３","http://sp-game.cocolog-nifty.com/38/"," "
+recommendsites2 : "UZIX in Japanese","http://www.nodus.ne.jp/~ghost/msx/uzix-j.html"," "
+recommendsites2 : "OUT of STANDARD","http://www.geocities.jp/upd780c1/index.html"," "
+recommendsites2 : "PC88ゲームライブラリ","http://www.digital-palm.com/88lib/index.html"," "
+recommendsites2 : "Apple II World","http://www.apple2world.jp/apple2/"," "
+recommendsites2 : "Ｏｈ！ＦＭ－７","http://www.retropc.net/fm-7/index.html"," "
+recommendsites2 : "try’s page","http://www.st.rim.or.jp/~nkomatsu/index.html"," "
+recommendsites2 : "MZ-700友の会","http://bgm.sub.jp/700USA/700.html"," "
+recommendsites2 : "古ゲー玉国","http://www.rr.iij4u.or.jp/~fuk/"," "
+recommendsites2 : "はにゃほにゃ帝国","http://homepage3.nifty.com/hne/"," "
+recommendsites2 : "電卓博物館","http://www.dentaku-museum.com/"," "
+recommendsites2 : "アロンの日記みたいなもの","http://aron.exblog.jp/"," "
+
+
+rs.mayura．jp : \0\s[5]私の家だよ～。\w8\1\s[10]とりあえず寄ってけ。\e
+rs.うさださくら : \0\s[5]『伺か』の生みの親、lsさんのサイトだね。\w8\1\s[10]すべてはここから始まった。オレらの創造主みたいなもんだ。\e
+rs.C．R．O．W．official page : \0\s[5]ベースウェアの一つ、ＣＲＯＷのサイトだよ～。\e
+rs.SSP（en）BUGTRAQ : \0\s[5]ベースウェアの一つ、ＳＳＰのサイトだよ～。\
+
+rs.ナムコ : \0\s[5]説明不要だね。\w8\1\s[10]だな。\e
+rs.カプコン : \0\s[0]Ｐｏｗと弥七。\w8\1\s[10]ま、ストⅡまでだな。\e
+rs.コナミ : \0\s[2]……コナミ……だよね。\w8\1\s[10]たぶん、同名の違う会社だろ。\e
+rs.セガ : \0\s[0]セガは永遠に不滅……だよね。\w8\1\s[10]もちろんだ。\e
+rs.新日本企画 : \0\s[0]いいメーカーだったんだけどね。\w8\1\s[10]餓狼とネオジオが出るまではな。\e
+rs.タイトー : \0\s[0]いんべーだー？\w8\1\s[10]いや、エレメカだろ。\e
+rs.スクウェア : \0\s[0]やっぱり……ＦＦかな。\w8\1\s[10]それはいいから、デストラップとアルファとブラスティーを出せ。\e
+rs.ゲームアーツ : \0\s[5]テグザーやりたくて８８買ったよね。\w8\1\s[10]ここには足向けて寝られん。\e
+rs.ハドソン : \0\s[3]日本最古のソフトメーカーだね。\w8\1\s[10]今はどうなってんのか知らんが。\e
+rs.ジャレコ : \0\s[0]忍者くんはここの作品じゃないんだよね。\w8\1\s[10]ＵＰＬだな。\e
+rs.アイレム : \0\s[4]スペランカー。\w8\1\s[10]いや、銀河帝国の逆襲だ。\e
+rs.日本物産 : \0\s[0]ニチブツといえば、ネチネチしたシューティングだよね。\n\n\w8\1\s[10]いや、麻雀だ。\n\0\s[7]シューティング！\w8\1\s[10]麻雀！\e
+rs.テーカン : \0\s[8]また間違った？\w8\n\n\1\s[10]いや、ここでいいんだ。\w8\n\0\s[4]なんか、胸の大きいお姉さん達に占領されてるんだけど。\w8\1\s[10]気のせいだ。\e
+rs.サン電子 : \0\s[0]ヘンなゲームがいっぱい。\w8\1\s[10]味があると言え。\w8\nＦＣ版のファンタジーゾーンから何かが変わった。\e
+rs.セタ : \0\s[0]将棋……\n\n\1\s[10]麻雀ッッッッツ！\w8\0\s[4]そんな力いっぱい言わなくても。\e
+rs.エポック社 : \0\s[0]カセットビジョンね。\w8\1\s[10]不遇なマシンだ。\e
+rs.ビスコ : \0\s[3]あんまりよく知らないんだけど。\w8\1\s[10]地味だしな。\e
+rs.カルチャーブレーン : \0\s[4]いいかげん、飛龍の拳はやめた方が……\w8\1\s[10]ライフワークなんだろ。\e
+rs.ゲームスタジオ : \0\s[4]……難しいね。\w8\1\s[10]かつての栄光は、ただ一本のソフトによって灰燼と帰した。\e
+rs.サクセス : \0\s[0]コットンとか……。\w8\1\s[10]地味なメーカーだ。\e
+
+rs.日本ファルコム : \0\s[8]斜陽の帝国だね。\w8\1\s[10]いまさら語る必要はあるまい。\e
+rs.システムソフト : \0\s[5]渋いよね。\w8\1\s[10]昔はよかった。\e
+rs.ボーステック : \0\s[0]老舗だね。\w8\n\n\1\s[10]とても一言では語り尽くせん。\w8\0\s[1]トップルジップのチョロＱ欲しいよ～。\e
+rs.マイクロキャビン : \1\s[10]ここも説明不要。\w8\0\s[1]セイレーンとかはーりぃふぉっくすとかリメイクしてよ～。\e
+rs.Ｔ＆Ｅソフト : \0\s[0]やっぱハイドライドでしょ。\w8\1\s[10]ゴルフに始まりゴルフに終わるか？\e
+rs.エニックス : \0\s[0]アドベンチャーのエニックス。\w8\1\s[10]もう昔には戻れないのか？\e
+rs.ＳＰＳ : \0\s[0]移植屋さん。\w8\1\s[10]Ｘ６８ｋユーザーはお世話になったな。\e
+rs.工画堂スタジオ : \0\s[0]破邪の封印とか。\w8\1\s[10]何はさておきアンドロイドだな。\e
+rs.アスキー : \0\s[0]説明不要もいいとこだね。\w8\1\s[10]昔も今も帝王だな。\e
+rs.ＨＡＬ研究所 : \0\s[5]ここにはお世話になったよね。\w8\1\s[10]いまだにジョイボール使ってるのお前だけだろ。\e
+rs.コンパイル : \0\s[0]昔は硬派なシューティングメーカーだったのにね。\w8\1\s[10]初心を忘れるな。\e
+rs.ソフトウェアスタジオＷＩＮＧ : \0\s[0]今は名前が変わって、個人運営になってるみたいだね。\w8\1\s[10]ファンは日参せよ。\e
+rs.光栄 : \0\s[0]例によって説明不要だね。\w8\1\s[10]相変わらず手広くやってるな。\e
+rs.アートディンク : \0\s[0]Ａ列車ね。\w8\1\s[10]細かいシミュを作るのが得意なメーカーだ。\e
+rs.データウエスト : \0\s[0]ＴＯＷＮＳユーザーにはおなじみだね。\w8\1\s[10]第４のユニットの続編はもう出ないのか？\e
+rs.チュンソフト : \0\s[0]ドアドアとポートピアね。\w8\1\s[10]ドラクエを忘れるな。\e
+rs.日本テレネット : \0\s[8]ウルフチームの本体。\w8\1\s[10]色んな意味で、一つの歴史だったな。今やパチンコゲーしか作っとらんが。\e
+rs.マイクロネット : \0\s[0]ミルキーウェイとかハーベストとか。\w8\1\s[10]最近出してるゲームの方が有名だな。\e
+rs.ファミリーソフト : \0\s[8]濃いね。濃すぎるね。\w8\1\s[10]こういうメーカーは大事にしないとな。\e
+rs.風雅システム : \0\s[0]アマランスだね。\w8\1\s[10]ディン……。\e
+rs.ＣＳＫ総合研究所 : \0\s[0]移植屋さんその２。\w8\1\s[10]ま、よくやったというべきか。\e
+rs.アリスソフト : \0\s[0]チャンピオンソフトじゃないの？\w8\1\s[10]その名前はあまり出さない方がいいらしいぞ。\e
+rs.テクノソフト : \0\s[0]サンダーフォースだね。\w8\1\s[10]当時は新鮮だったな。\e
+rs.新日本プログラミング : \0\s[0]偉大なる総帥、いまだ健在。\w8\1\s[10]１・\w8２・\w8３・\w8ダーッ！！\e
+rs.ズーム : \0\s[5]復活してよかったね。\w8\1\s[10]かつての名作がダウンロードできるぞ。行け。\e
+
+rs.プロジェクトEGG : \1\s[10]レトロゲームのオンライン配信サイトだ。業界では草分け的存在だな。\e
+rs.なつゲー : \1\s[10]レトロゲームのオンライン配信サイトだ。コミュニティとしての機能が充実している。\e
+rs.GameX-Game．excite : \1\s[10]レトロゲームのオンライン配信サイトだ。SEGAのゲームが多い感じだな。\e
+rs.Game@nifty：レトロゲーム : \1\s[10]レトロゲームのオンライン配信サイトだ。ＰＣゲームが充実している。\e
+rs.BBソフト : \1\s[10]レトロゲームのオンライン配信サイトだ。シミュレーション・テーブル系が多いようだな。\e
+rs.RetroPC．NET : \1\s[10]レトロゲーム・ＰＣ関連の総合情報サイトだ。かなりの老舗だな。\e
+rs.Amusement Center : \1\s[10]レトロゲームのオンライン配信サイトだ。ＰＣ系がメインらしいな。\e
+
+rs.ALL ABOUT ベーマガ : \1\s[10]マイコンＢＡＳＩＣマガジンのデータベースサイトだ。\w8元ベーマガ読者なら当然知ってるよな。\e
+rs.Baboo！JAPAN : \1\s[10]ＭＳＸ系サーチエンジンの最大手だな。\e
+rs.Tagoo : \1\s[10]ＭＳＸソフトの検索・投稿型レビューサイトだ。\w8ＭＳＸユーザーは通っとけ。\e
+rs.懐ぱそリンク : \1\s[10]レトロゲーム・ＰＣ関連サイトのリンク集だ。\w8これも老舗だな。\e
+rs.CLASSIC VIDEOGAME STATION ODYSSEY : \1\s[10]代表的なレトロゲームの総合情報サイトだ。\w8サイトデザインもコンテンツの内容もトップクラスだな。\e
+rs.OLD－COMPUTERS．COM : \1\s[10]オールドコンピュータのデータベースだ。\w8世界中のマシンが登録されている。\e
+rs.レトロゲームファンクラブ : \1\s[10]レトロゲームのコミュニティサイトだ。\w8ここも年季が入ってるな。\e
+rs.ゲームセンターあらし公式サイト : \1\s[10]ゲーマーには説明不要だな。\e
+rs.得物屋24時間 : \1\s[10]Wizardry関連のデータサイトだ。\w8ＷＩＺファンなら知ってて当然だな。\e
+rs.MSX3 －OUT OF MEMORY－ : \1\s[10]ＭＳＸゲームの攻略・レビューサイトだ。\w8ハイドライドっぽい画面がいい感じだな。\e
+rs.namco ’70－’80’s VIDEO GAMES MUSEUM : \1\s[10]ナムコのゲームを画像付きで紹介しているサイトだ。\w8ここも基本だな。\e
+rs.SEGA MARK-III webpage : \1\s[10]セガのゲームを網羅したレビューサイトだ。\w8セガ好きなら通っとけ。\e
+rs.遊想雑貨 : \1\s[10]懐かしのオモチャやゲームを紹介している。\w8ここを見て思い出に浸るのもいいだろう。\e
+rs.Attic or Garret : \1\s[10]往年のコンピュータの紹介サイトだ。\w8サイトが綺麗にまとまってて見やすいな。\e
+rs.DigiBarn Computer Museum : \1\s[10]海外のＰＣコレクターのサイトだ。\w8かなりの兵のようだな。\e
+rs.iTA-Choco Systems : \1\s[10]知る人ぞ知るイタチョコシステムの公式サイトだ。\w8謎ゲーのハシリだな。\e
+rs.古い男の部屋 : \1\s[10]ＭＺ関係を中心としたレトロゲームの解説サイトだ。\w8あのポイボスもダウンロードできるぞ。\e
+rs.開発室Pixel : \1\s[10]良質なフリーのゲームを提供しているサイトだ。\w8洞窟物語はやっておけ。\e
+rs.Das virtuelle Computermuseum : \1\s[10]海外のＰＣコレクターのサイトだ。\w8なかなかの品揃えだな。\e
+rs.バンゲリング帝国復興計画 : \1\s[10]バンゲリングベイの素晴らしさを伝えるサイトだ。\w8クソゲーだと思ってる奴は、一度ここを見てみるといい。\e
+rs.わいじんズ : \1\s[10]カオスエンジェルスの原画を担当したＹ人氏のサイトだ。\e
+rs.Historic Personal Computer Leaflets : \1\s[10]コンピュータのカタログを集めたサイトだ。\w8よくもまあこんなに集めたな。\e
+rs.魔法使いの森 : \1\s[10]往年のコンピュータについてのコラムが載ってる。\w8なかなか興味深い記事が多いな。\e
+rs.アルゴの記憶 : \1\s[10]ＭＺシリーズの紹介・解説サイトだ。\w8貴重な資料が満載だな。\e
+rs.１９８Ｘ : \1\s[10]オールドゲームをＷｅｂマガジン形式で紹介している。\w8面白い切り口だな。\e
+rs.Nostalgia : \1\s[10]往年のゲーム機・ソフトのレビューサイトだ。\w8写真が多く、資料としてかなり充実しているな。\e
+rs.Jun Amano’s Homepage : \1\s[10]電子ゲームやポケコンの紹介サイトだ。\w8ここも資料価値の高いサイトだ。\e 
+rs.gigamix online.com : \1\s[10]ＭＳＸ情報専門ブログだ。\w8ＭＳＸ関係のニュースはここを見れば完璧だな。\e
+rs.ゲームショップ１９８３ : \1\s[10]北海道のレトロゲーム系ショップのブログだ。\w8行った事はないが、良さそうな店だな。\e
+rs.UZIX in Japanese : \1\s[10]ＭＳＸで動くＵＮＩＸを紹介しているサイトだ。\w8インターネットも出来るようになるぞ。\e
+rs.OUT of STANDARD : \1\s[10]PC-8001についての情報を扱ったサイトだ。\w8ゲームのカタログなんかも見られる。\e
+rs.PC88ゲームライブラリ : \1\s[10]PC-8801のゲームを網羅したライブラリーだ。\e
+rs.Apple II World : \1\s[10]APPLEⅡの情報サイトだ。\w8相当なマニアのようだな。\e
+rs.Ｏｈ！ＦＭ－７ : \1\s[10]ＦＭ－７の情報サイトだ。\w8ＦＭ－７関係ならここを見ておけば間違いなかろう。\e
+rs.try’s page : \1\s[10]半導体やワンボードマイコン、\w8ALTAIR等の情報が充実したサイトだ。その筋の人間には有り難いな。\e
+rs.MZ-700友の会 : \1\s[10]MZ-700関連の情報サイトだ。\w8ブラウザでMZ-700のゲームを遊ぶ事もできるぞ。\e
+rs.古ゲー玉国 : \1\s[10]レトロゲームネタとファミコンソフトのデータベースがある。\w8濃いネタが多くて楽しめるぞ。\e
+rs.はにゃほにゃ帝国 : \1\s[10]ファミコンネタ・カタログ・辞典など、雑多な情報を揃えたサイトだ。\w8読み応えがあるな。\e
+rs.電卓博物館 : \1\s[10]古い電卓やポータブルコンピュータを展示しているサイトだ。\w8滅多に見られないマシンが沢山載ってる。\e
+rs.アロンの日記みたいなもの : \1\s[10]断空我改めアロン氏のBlogだ。\w8やってやるぜ！\e
+
+
+#--------------------------------------------------------------------------
+#巡回モード用ＵＲＬ
+
+checksitename.default : "YAHOOオークション・PC-98","YAHOOオークション・MSX","YAHOOオークション・X68000","YAHOOオークション・FM-TOWNS","YAHOOオークション・その他"
+checksiteurl.default : "http://list.auctions.yahoo.co.jp/jp/2084039763-category-leaf.html","http://list.auctions.yahoo.co.jp/jp/2084039771-category-leaf.html","http://list.auctions.yahoo.co.jp/jp/2084039773-category-leaf.html","http://list.auctions.yahoo.co.jp/jp/2084039765-category-leaf.html","http://list.auctions.yahoo.co.jp/jp/2084039776-category-leaf.html"
+
+
+:endcrypt

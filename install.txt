@@ -1,0 +1,4 @@
+type,ghost
+name,‚Ü‚ä‚ç••‚¤‚É‚ã‚¤
+directory,mayura
+balloon.directory,wiz

@@ -1,0 +1,11 @@
+name,Ç‹Ç‰ÇÁÅïçïÇ§Ç…Ç„Ç§
+type,ghost
+
+sakura.name,Ç‹Ç‰ÇÁ
+kero.name,Ç§Ç…Ç„Ç§
+
+icon,hexagram.ico
+
+shiori.logo.filename,ai.png
+shiori.logo.alignment,leftbottom
+shiori.logo.drawmethod,1
